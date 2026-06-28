@@ -109,6 +109,7 @@ export function useSupabaseRoom(roomId, userId, userName) {
           .eq('room_id', roomId)
           .eq('user_id', userId);
         if (error) setError(error.message);
+        else fetchLatestVotes(roomId);
         return;
       }
 
@@ -124,7 +125,7 @@ export function useSupabaseRoom(roomId, userId, userName) {
         setLocalVote(null);
       }
     },
-    [roomId, userId, userName, setLocalVote, setError],
+    [roomId, userId, userName, setLocalVote, setError, fetchLatestVotes],
   );
 
   const leaveRoom = useCallback(async () => {
