@@ -1,0 +1,285 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html,
+  body,
+  #root {
+    @apply h-full w-full m-0 p-0 overflow-hidden;
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+
+  body {
+    @apply bg-gradient-to-br from-black via-neutral-950 to-neutral-900 text-white antialiased;
+  }
+}
+
+@layer components {
+  /* ─── Glass UI ─────────────────────────────────────────────────── */
+  .glass-panel {
+    @apply bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl;
+  }
+
+  .glass-button {
+    @apply px-6 py-3 rounded-xl font-semibold transition-all duration-200
+           bg-white/10 hover:bg-white/20 active:bg-white/30
+           border border-white/10 hover:border-white/20
+           text-white shadow-lg hover:shadow-xl
+           disabled:opacity-40 disabled:cursor-not-allowed text-sm;
+  }
+
+  /* ─── Game Table (green felt) ──────────────────────────────────── */
+  .game-table {
+    @apply relative w-full h-full overflow-hidden;
+    background: radial-gradient(ellipse at 50% 40%, #1a5c2e 0%, #0f3d1f 50%, #0a2a14 100%);
+  }
+
+  .game-table::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 40px,
+        rgba(255, 255, 255, 0.015) 40px,
+        rgba(255, 255, 255, 0.015) 41px
+      ),
+      repeating-linear-gradient(
+        90deg,
+        transparent,
+        transparent 40px,
+        rgba(255, 255, 255, 0.015) 40px,
+        rgba(255, 255, 255, 0.015) 41px
+      );
+    pointer-events: none;
+  }
+
+  .game-table::after {
+    content: '';
+    position: absolute;
+    inset: 12px;
+    border: 2px solid rgba(255, 255, 255, 0.06);
+    border-radius: 24px;
+    pointer-events: none;
+  }
+
+  /* ─── Participant Slot ─────────────────────────────────────────── */
+  .participant-slot {
+    @apply absolute flex flex-col items-center gap-1.5;
+    transform: translate(-50%, -50%);
+    transition: opacity 0.3s;
+    z-index: 10;
+  }
+
+  .participant-name-badge {
+    @apply text-xs font-medium px-2 py-0.5 rounded-md whitespace-nowrap;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    color: #cbd5e1;
+  }
+
+  .mediator-badge {
+    color: #fbbf24;
+  }
+
+  .mediator-star {
+    @apply text-amber-400;
+  }
+
+  /* ─── Deck Area ────────────────────────────────────────────────── */
+  .deck-area {
+    @apply absolute bottom-0 left-0 right-0 flex justify-center pb-3;
+    z-index: 20;
+    background: linear-gradient(0deg, rgba(0, 0, 0, 0.3) 0%, transparent 100%);
+    pointer-events: none;
+  }
+
+  .deck-cards {
+    @apply flex gap-1.5 items-end;
+    pointer-events: auto;
+  }
+
+  /* ─── Card 2D ──────────────────────────────────────────────────── */
+  .card-2d {
+    perspective: 600px;
+    flex-shrink: 0;
+  }
+
+  .card-sm {
+    width: 44px;
+    height: 64px;
+  }
+  .card-md {
+    width: 56px;
+    height: 80px;
+  }
+  .card-lg {
+    width: 70px;
+    height: 100px;
+  }
+
+  .card-clickable {
+    cursor: pointer;
+    transition: transform 0.15s ease;
+  }
+
+  .card-clickable:hover {
+    transform: translateY(-4px);
+  }
+
+  .card-clickable:active {
+    transform: translateY(-2px) scale(0.97);
+  }
+
+  .card-2d-inner {
+    @apply relative w-full h-full;
+    transition: transform 0.4s ease;
+    transform-style: preserve-3d;
+  }
+
+  .card-2d-flipped {
+    transform: rotateY(180deg);
+  }
+
+  .card-2d-back,
+  .card-2d-front {
+    @apply absolute inset-0;
+    border-radius: 6px;
+    backface-visibility: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    overflow: hidden;
+  }
+
+  /* Card Back */
+  .card-2d-back {
+    background-image: url('/images/cards/back.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+
+  /* Card Front */
+  .card-2d-front {
+    background-image: url('/images/cards/front.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    transform: rotateY(180deg);
+  }
+
+  .card-selected {
+    transform: translateY(-12px);
+  }
+
+  .card-2d-selected {
+    border-color: #eab308;
+    box-shadow:
+      0 0 12px rgba(234, 179, 8, 0.5),
+      inset 0 0 12px rgba(234, 179, 8, 0.15);
+  }
+
+  .card-2d-value-top {
+    @apply absolute top-1 left-1.5 text-[10px] font-bold text-white;
+  }
+
+  .card-2d-value-main {
+    @apply text-xl font-bold text-slate-800;
+    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.3);
+  }
+
+  .card-2d-value-bottom {
+    @apply absolute bottom-1 right-1.5 text-[10px] font-bold text-slate-400;
+    transform: rotate(180deg);
+  }
+
+  /* ─── Participant Sidebar ──────────────────────────────────────── */
+  .participant-sidebar {
+    @apply h-full flex flex-col;
+    background: rgba(0, 0, 0, 0.35);
+    backdrop-filter: blur(8px);
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    overflow: hidden;
+  }
+
+  .sidebar-title {
+    @apply flex items-center justify-between px-3 py-2 text-xs font-semibold text-slate-400 uppercase tracking-wider;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .sidebar-count {
+    @apply bg-white/10 text-slate-400 rounded-full px-1.5 py-0.5 text-[10px] font-medium;
+  }
+
+  .sidebar-list {
+    @apply flex-1 overflow-y-auto px-2 py-1 space-y-0.5;
+  }
+
+  .sidebar-item {
+    @apply flex items-center justify-between px-2 py-1.5 rounded-md text-xs;
+    transition: background 0.15s;
+  }
+
+  .sidebar-item:hover {
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  .sidebar-item-local {
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  .sidebar-item-left {
+    @apply flex items-center gap-1.5 min-w-0;
+  }
+
+  .sidebar-dot {
+    @apply w-1.5 h-1.5 rounded-full flex-none;
+  }
+
+  .dot-voted {
+    background: #10b981;
+    box-shadow: 0 0 4px rgba(16, 185, 129, 0.5);
+  }
+
+  .dot-pending {
+    background: #64748b;
+  }
+
+  .sidebar-name {
+    @apply text-slate-200 truncate;
+  }
+
+  .sidebar-status {
+    @apply text-xs font-bold flex-none;
+  }
+
+  .status-voted {
+    color: #10b981;
+  }
+
+  .status-pending {
+    color: #475569;
+  }
+
+  /* ─── Bottom Controls ──────────────────────────────────────────── */
+  .bottom-controls {
+    @apply flex-none flex gap-4 px-4 pb-4 pt-2;
+    background: linear-gradient(0deg, rgba(0, 0, 0, 0.4) 0%, transparent 100%);
+  }
+
+  .bottom-controls > * {
+    @apply flex-1;
+  }
+}
+
+@layer utilities {
+  .text-glow {
+    text-shadow: 0 0 20px rgba(234, 179, 8, 0.5);
+  }
+}

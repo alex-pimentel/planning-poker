@@ -1,0 +1,31 @@
+[project]
+name = "planning-poker"
+plan = "free"
+
+[api]
+enabled = true
+port = 54321
+schemas = ["public", "storage", "graphql_public"]
+
+[db]
+major_version = 15
+
+[db.pooler]
+enabled = true
+pool_mode = "transaction"
+default_pool_size = 10
+max_client_conn = 100
+
+[analytics]
+enabled = false
+
+[queues]
+enabled = false
+
+[realtime]
+enabled = true
+max_client_count = 1000
+
+[auth]
+enabled = true
+sessions_timeout = 86400

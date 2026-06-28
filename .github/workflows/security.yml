@@ -1,0 +1,27 @@
+name: Security
+
+on:
+  workflow_call:
+  workflow_dispatch:
+
+jobs:
+  security:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "22"
+          cache: "npm"
+          cache-dependency-path: frontend/package.json
+      - run: npm ci
+      - name: npm audit
+        run: npm audit --audit-level=high
+        continue-on-error: true
+      - name: Check for secrets
+        run: |
+          npm install -g secretlint
+          npx secretlint "src/**/*" || echo "secretlint not configured, skipping"

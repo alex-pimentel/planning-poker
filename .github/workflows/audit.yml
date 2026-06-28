@@ -1,0 +1,29 @@
+name: Audit
+
+on:
+  workflow_call:
+  workflow_dispatch:
+
+jobs:
+  dependency-audit:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "22"
+          cache: "npm"
+          cache-dependency-path: frontend/package.json
+      - run: npm ci
+      - name: Check dependency freshness
+        run: npx npm-check --ignore-engines || true
+      - name: Bundle size audit
+        run: |
+          npm run build
+          echo "Dist size:"
+          du -sh dist/
+          echo "Entry point size:"
+          ls -lh dist/assets/*.js | head -5
