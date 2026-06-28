@@ -1,11 +1,11 @@
-# Planning Poker 3D — Project Blueprint
+# Planning Poker — Project Blueprint
 
 This document captures the complete technical specification for the
-**Serverless 3D Planning Poker** application.
+**Serverless Planning Poker** application.
 
 ## Architecture
 
-- **Frontend**: Cloudflare Pages + Vite + React Three Fiber
+- **Frontend**: Cloudflare Pages + Vite + React 19
 - **Backend**: Supabase (PostgreSQL + Realtime Broadcast/Presence + Edge Functions)
 - **State**: Zustand
 - **CI/CD**: GitHub Actions (lint → test → security → audit → build → deploy)
@@ -15,7 +15,7 @@ This document captures the complete technical specification for the
 - **Anonymous sessions**: UUID-based identity instead of auth — lowers friction
 - **Single-table Realtime**: Votes and rooms both in `supabase_realtime` publication
 - **Mediator-enforced workflow**: Only the room creator can reveal/reset
-- **3D as primary interface**: Three.js for table, cards, and avatar presence
+- **Pure 2D/CSS rendering**: Green felt table via CSS gradients, card flip with CSS `rotateY`
 - **Edge Function for admin ops**: `manage-room` handles bulk reset/reveal/delete
 
 ## Data Flow
@@ -23,7 +23,7 @@ This document captures the complete technical specification for the
 1. Room created → `INSERT rooms` → Realtime broadcasts to subscribers
 2. User joins → Presence channel tracks online state
 3. Vote → `UPSERT votes` → Postgres changes feed → all clients
-4. Reveal → `UPDATE rooms SET status='revealed'` → cards flip in 3D
+4. Reveal → `UPDATE rooms SET status='revealed'` → cards flip with CSS animation
 5. Reset → Edge Function deletes votes, resets status
 
 ## RLS Strategy

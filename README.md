@@ -1,11 +1,10 @@
 <div align="center">
-  <h1>🎯 Planning Poker 3D</h1>
-  <p><strong>Immersive 3D real-time sprint planning — serverless, multiplayer, beautiful</strong></p>
-  <p>React Three Fiber · Supabase Realtime · Cloudflare Pages · Zustand</p>
+  <h1>🎯 Planning Poker</h1>
+  <p><strong>Real-time sprint planning — serverless, multiplayer, beautifully simple</strong></p>
+  <p>React 19 · Supabase Realtime · Cloudflare Pages · Zustand</p>
 
   <p>
     <img src="https://img.shields.io/badge/react-19-61DAFB?style=for-the-badge&logo=react&logoColor=white" alt="React">
-    <img src="https://img.shields.io/badge/three.js-0.170-000000?style=for-the-badge&logo=three.js&logoColor=white" alt="Three.js">
     <img src="https://img.shields.io/badge/supabase-2.45-3FCF8E?style=for-the-badge&logo=supabase&logoColor=white" alt="Supabase">
     <img src="https://img.shields.io/badge/zustand-5-593D88?style=for-the-badge" alt="Zustand">
     <img src="https://img.shields.io/badge/cloudflare%20pages-latest-F38020?style=for-the-badge&logo=cloudflare&logoColor=white" alt="Cloudflare Pages">
@@ -27,8 +26,8 @@
 
 ## ✨ Features
 
-- **3D Immersive Environment** — Interactive planning table built with React Three Fiber, complete with 3D cards, avatar orbs, and animated reveals
 - **Real-time Multiplayer** — Powered by Supabase Realtime (Broadcast + Presence) for instant vote sync across all participants
+- **Card Flip Animation** — CSS `rotateY` with `backface-visibility` for smooth flip reveals
 - **Mediator Workflow** — Create rooms, reveal votes, reset rounds, and track task history with full mediator controls
 - **Multiple Deck Types** — Fibonacci, T-Shirt sizes, or Powers of 2 — choose what fits your team
 - **Serverless Architecture** — Zero servers to manage. Frontend on Cloudflare Pages global CDN, backend on Supabase
@@ -44,17 +43,17 @@
                      ┌─────────────────────────────────┐
                      │      Cloudflare Pages CDN        │
                      │   (Global Edge, ~300 locations)  │
-                     │        3d-planning-poker         │
+                     │        planning-poker            │
                      └──────────────┬──────────────────┘
                                     │ HTTPS / WSS
                                     ▼
 ┌─────────────────────────────────────────────────────────────────────┐
 │                         Supabase Backend                            │
 │                                                                     │
-│  ┌──────────────────┐  ┌──────────────────┐  ┌──────────────────┐  │
-│  │    Realtime       │  │  Edge Functions  │  │    Storage       │  │
-│  │  Broadcast/Pres.  │  │  (Deno runtime)  │  │  (3D assets)     │  │
-│  └────────┬─────────┘  └────────┬─────────┘  └──────────────────┘  │
+│  ┌──────────────────┐  ┌──────────────────┐                        │
+│  │    Realtime       │  │  Edge Functions  │                        │
+│  │  Broadcast/Pres.  │  │  (Deno runtime)  │                        │
+│  └────────┬─────────┘  └────────┬─────────┘                        │
 │           │                      │                                  │
 │           ▼                      ▼                                  │
 │  ┌─────────────────────────────────────────────────────────────┐    │
@@ -72,7 +71,7 @@
 1. **Mediator creates room** → `INSERT rooms` → row broadcast via Realtime
 2. **Participant joins** → `SELECT rooms by code` → Presence channel tracks online users
 3. **Vote cast** → `UPSERT votes` → Postgres changes feed → all clients receive update
-4. **Reveal** → `UPDATE rooms SET status = 'revealed'` → clients flip cards with 3D animation
+4. **Reveal** → `UPDATE rooms SET status = 'revealed'` → cards flip with CSS animation
 5. **Reset** → Edge Function `DELETE votes` + `UPDATE rooms` → table clears, new round begins
 
 ---
@@ -115,7 +114,7 @@ Open **http://localhost:5173** — create a room, share the code, and start plan
 
 | Service | URL | Description |
 |---|---|---|
-| **Frontend** | http://localhost:5173 | React SPA with 3D game table |
+| **Frontend** | http://localhost:5173 | React SPA with real-time game table |
 | **Supabase Studio** | http://localhost:54323 | Database management UI |
 | **Supabase API** | http://localhost:54321 | REST + Realtime endpoints |
 | **SMTP (fake)** | http://localhost:54324 | Local email testing |
@@ -145,21 +144,19 @@ planning-poker/
 │           └── index.ts
 │
 ├── frontend/
-│   ├── public/assets/3d/          # GLTF/GLB models (placeholder)
 │   ├── src/
 │   │   ├── components/
-│   │   │   ├── canvas/            # React Three Fiber 3D components
-│   │   │   │   ├── GameTable.jsx       # 3D scene with cards
-│   │   │   │   ├── PlayingCard.jsx     # Animated 3D card mesh
-│   │   │   │   ├── Avatars.jsx         # Floating participant orbs
-│   │   │   │   └── TableEnvironment.jsx # Lighting, shadows, table
+│   │   │   ├── canvas/            # Game table (CSS green felt)
+│   │   │   │   └── GameTable.jsx       # Participant slots + deck row
 │   │   │   └── ui/                # 2D interface panels
 │   │   │       ├── CreateRoom.jsx
 │   │   │       ├── JoinRoom.jsx
 │   │   │       ├── RoomInfo.jsx
 │   │   │       ├── VoteResults.jsx
 │   │   │       ├── MediatorControls.jsx
-│   │   │       └── ParticipantList.jsx
+│   │   │       ├── ParticipantSidebar.jsx
+│   │   │       ├── Card2D.jsx
+│   │   │       └── Select.jsx
 │   │   ├── hooks/
 │   │   │   ├── useSupabaseRoom.js  # Realtime + Presence orchestration
 │   │   │   └── useRoomActions.js   # CRUD operations for rooms
@@ -233,7 +230,7 @@ The project is designed for Cloudflare Pages with automatic CI/CD.
 # Manual deployment (requires wrangler CLI)
 cd frontend
 npm run build
-npx wrangler pages deploy dist --project-name=3d-planning-poker
+npx wrangler pages deploy dist --project-name=planning-poker
 ```
 
 ### Automatic CI/CD
@@ -299,12 +296,11 @@ make act-all         # Simulate full CI pipeline
 
 | Layer | Technology |
 |---|---|
-| **3D Engine** | [React Three Fiber](https://docs.pmnd.rs/react-three-fiber) + [Drei](https://github.com/pmndrs/drei) |
 | **State** | [Zustand](https://github.com/pmndrs/zustand) |
 | **Backend** | [Supabase](https://supabase.com) (PostgreSQL + Realtime + Edge Functions) |
 | **Frontend** | [React 19](https://react.dev) + [Vite 6](https://vite.dev) |
 | **UI** | [Tailwind CSS 3](https://tailwindcss.com) (glassmorphism design) |
-| **Animation** | [Framer Motion](https://www.framer.com/motion/) + [Framer Motion 3D](https://www.framer.com/motion/three-component/) |
+| **Animation** | CSS transitions (`rotateY`, `backface-visibility`) |
 | **Hosting** | [Cloudflare Pages](https://pages.cloudflare.com) |
 | **Testing** | [Vitest](https://vitest.dev) + [Playwright](https://playwright.dev) |
 | **CI/CD** | [GitHub Actions](https://github.com/features/actions) |
@@ -318,5 +314,5 @@ MIT © 2026
 ---
 
 <div align="center">
-  <sub>Built with ❤️ using React Three Fiber, Supabase, and Cloudflare Pages</sub>
+  <sub>Built with ❤️ using React, Supabase, and Cloudflare Pages</sub>
 </div>

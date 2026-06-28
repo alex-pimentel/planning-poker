@@ -1,6 +1,6 @@
 # AGENTS.md
 
-This repo is a **Serverless 3D Planning Poker** app.
+This repo is a **Serverless Planning Poker** app.
 
 ## Commands
 

@@ -1,9 +1,9 @@
 {
-  "name": "planning-poker-3d",
+  "name": "planning-poker",
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "description": "3D Realtime Planning Poker — Serverless multiplayer with React Three Fiber and Supabase",
+  "description": "Realtime Planning Poker — Serverless multiplayer with Supabase and Cloudflare Pages",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
