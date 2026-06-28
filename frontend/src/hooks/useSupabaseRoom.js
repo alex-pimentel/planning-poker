@@ -97,6 +97,21 @@ export function useSupabaseRoom(roomId, userId, userName) {
   const castVote = useCallback(
     async (value) => {
       if (!roomId || !userId) return;
+
+      const currentVote = useGameStore.getState().localVote;
+
+      // Clicking the same card again removes the vote
+      if (value === currentVote) {
+        setLocalVote(null);
+        const { error } = await supabase
+          .from('votes')
+          .delete()
+          .eq('room_id', roomId)
+          .eq('user_id', userId);
+        if (error) setError(error.message);
+        return;
+      }
+
       setLocalVote(value);
       const { error } = await supabase
         .from('votes')
