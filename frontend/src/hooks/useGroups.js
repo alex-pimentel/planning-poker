@@ -1,6 +1,6 @@
-import { useCallback, useEffect } from 'react';
-import { supabase } from '../lib/supabase';
-import { useGameStore } from '../store/gameStore';
+import { useCallback, useEffect } from "react";
+import { supabase } from "../lib/supabase";
+import { useGameStore } from "../store/gameStore";
 
 export function useGroups(roomId) {
   const setGroups = useGameStore((s) => s.setGroups);
@@ -11,19 +11,19 @@ export function useGroups(roomId) {
   const fetchGroups = useCallback(async () => {
     if (!roomId) return;
     const { data, error } = await supabase
-      .from('groups')
-      .select('*')
-      .eq('room_id', roomId)
-      .order('created_at', { ascending: true });
+      .from("groups")
+      .select("*")
+      .eq("room_id", roomId)
+      .order("created_at", { ascending: true });
     if (!error && data) setGroups(data);
   }, [roomId, setGroups]);
 
   const fetchParticipantGroups = useCallback(async () => {
     if (!roomId) return;
     const { data, error } = await supabase
-      .from('participant_groups')
-      .select('*')
-      .eq('room_id', roomId);
+      .from("participant_groups")
+      .select("*")
+      .eq("room_id", roomId);
     if (!error && data) {
       const map = {};
       for (const pg of data) {
@@ -38,7 +38,7 @@ export function useGroups(roomId) {
       const setError = useGameStore.getState().setError;
       if (!roomId || !name.trim()) return null;
       const { data, error } = await supabase
-        .from('groups')
+        .from("groups")
         .insert({ room_id: roomId, name: name.trim() })
         .select()
         .single();
@@ -60,9 +60,9 @@ export function useGroups(roomId) {
       const setError = useGameStore.getState().setError;
       if (!name.trim()) return;
       const { error } = await supabase
-        .from('groups')
+        .from("groups")
         .update({ name: name.trim() })
-        .eq('id', groupId);
+        .eq("id", groupId);
       if (error) {
         setError(error.message);
         return;
@@ -76,9 +76,9 @@ export function useGroups(roomId) {
     async (groupId) => {
       const setError = useGameStore.getState().setError;
       const { error } = await supabase
-        .from('groups')
+        .from("groups")
         .delete()
-        .eq('id', groupId);
+        .eq("id", groupId);
       if (error) {
         setError(error.message);
         return;
@@ -93,10 +93,12 @@ export function useGroups(roomId) {
     async (userId, groupId) => {
       const setError = useGameStore.getState().setError;
       if (!roomId) return;
-      const { error } = await supabase.from('participant_groups').upsert(
-        { room_id: roomId, user_id: userId, group_id: groupId },
-        { onConflict: 'room_id, user_id' },
-      );
+      const { error } = await supabase
+        .from("participant_groups")
+        .upsert(
+          { room_id: roomId, user_id: userId, group_id: groupId },
+          { onConflict: "room_id, user_id" },
+        );
       if (error) {
         setError(error.message);
         return;
@@ -111,10 +113,10 @@ export function useGroups(roomId) {
       const setError = useGameStore.getState().setError;
       if (!roomId) return;
       const { error } = await supabase
-        .from('participant_groups')
+        .from("participant_groups")
         .delete()
-        .eq('room_id', roomId)
-        .eq('user_id', userId);
+        .eq("room_id", roomId)
+        .eq("user_id", userId);
       if (error) {
         setError(error.message);
         return;
@@ -130,10 +132,10 @@ export function useGroups(roomId) {
       const setError = useGameStore.getState().setError;
       if (!roomId || !userId) return;
       const { data: existing, error: selErr } = await supabase
-        .from('participant_groups')
-        .select('id')
-        .eq('room_id', roomId)
-        .eq('user_id', userId)
+        .from("participant_groups")
+        .select("id")
+        .eq("room_id", roomId)
+        .eq("user_id", userId)
         .maybeSingle();
       if (selErr) {
         setError(selErr.message);
@@ -142,13 +144,13 @@ export function useGroups(roomId) {
       let opError;
       if (existing?.id) {
         const { error } = await supabase
-          .from('participant_groups')
+          .from("participant_groups")
           .update({ group_id: groupId })
-          .eq('room_id', roomId)
-          .eq('user_id', userId);
+          .eq("room_id", roomId)
+          .eq("user_id", userId);
         opError = error;
       } else {
-        const { error } = await supabase.from('participant_groups').insert({
+        const { error } = await supabase.from("participant_groups").insert({
           room_id: roomId,
           user_id: userId,
           group_id: groupId,
@@ -171,11 +173,11 @@ export function useGroups(roomId) {
     const groupsChannel = supabase
       .channel(`groups-db:${roomId}`)
       .on(
-        'postgres_changes',
+        "postgres_changes",
         {
-          event: '*',
-          schema: 'public',
-          table: 'groups',
+          event: "*",
+          schema: "public",
+          table: "groups",
           filter: `room_id=eq.${roomId}`,
         },
         () => fetchGroups(),
@@ -184,11 +186,11 @@ export function useGroups(roomId) {
     const pgChannel = supabase
       .channel(`participant_groups-db:${roomId}`)
       .on(
-        'postgres_changes',
+        "postgres_changes",
         {
-          event: '*',
-          schema: 'public',
-          table: 'participant_groups',
+          event: "*",
+          schema: "public",
+          table: "participant_groups",
           filter: `room_id=eq.${roomId}`,
         },
         () => fetchParticipantGroups(),

@@ -1,6 +1,6 @@
-import { useCallback, useEffect } from 'react';
-import { supabase } from '../lib/supabase';
-import { useGameStore } from '../store/gameStore';
+import { useCallback, useEffect } from "react";
+import { supabase } from "../lib/supabase";
+import { useGameStore } from "../store/gameStore";
 
 export function useTasks(roomId) {
   const tasks = useGameStore((s) => s.tasks);
@@ -10,10 +10,10 @@ export function useTasks(roomId) {
   const fetchTasks = useCallback(async () => {
     if (!roomId) return;
     const { data, error } = await supabase
-      .from('tasks')
-      .select('*')
-      .eq('room_id', roomId)
-      .order('sort_order', { ascending: true });
+      .from("tasks")
+      .select("*")
+      .eq("room_id", roomId)
+      .order("sort_order", { ascending: true });
     if (!error && data) {
       setTasks(data);
     }
@@ -21,7 +21,11 @@ export function useTasks(roomId) {
 
   const notifyTasksChanged = useCallback(async () => {
     const channel = supabase.channel(`room:${roomId}`);
-    await channel.send({ type: 'broadcast', event: 'tasks_changed', payload: {} });
+    await channel.send({
+      type: "broadcast",
+      event: "tasks_changed",
+      payload: {},
+    });
     supabase.removeChannel(channel);
   }, [roomId]);
 
@@ -29,14 +33,14 @@ export function useTasks(roomId) {
     async (name, groupId) => {
       if (!roomId || !name.trim()) return null;
       const { data: existing } = await supabase
-        .from('tasks')
-        .select('sort_order')
-        .eq('room_id', roomId)
-        .order('sort_order', { ascending: false })
+        .from("tasks")
+        .select("sort_order")
+        .eq("room_id", roomId)
+        .order("sort_order", { ascending: false })
         .limit(1);
       const nextSort = existing?.length ? existing[0].sort_order + 1 : 0;
       const { data, error } = await supabase
-        .from('tasks')
+        .from("tasks")
         .insert({
           room_id: roomId,
           name: name.trim(),
@@ -58,9 +62,9 @@ export function useTasks(roomId) {
   const updateTask = useCallback(
     async (taskId, updates) => {
       const { error } = await supabase
-        .from('tasks')
+        .from("tasks")
         .update(updates)
-        .eq('id', taskId);
+        .eq("id", taskId);
       if (!error) {
         await fetchTasks();
         await notifyTasksChanged();
@@ -71,10 +75,7 @@ export function useTasks(roomId) {
 
   const deleteTask = useCallback(
     async (taskId) => {
-      const { error } = await supabase
-        .from('tasks')
-        .delete()
-        .eq('id', taskId);
+      const { error } = await supabase.from("tasks").delete().eq("id", taskId);
       if (!error) {
         await fetchTasks();
         await notifyTasksChanged();
@@ -91,11 +92,11 @@ export function useTasks(roomId) {
         return {
           id,
           room_id: roomInfo.id,
-          name: existing?.name || 'Task',
+          name: existing?.name || "Task",
           sort_order: i,
         };
       });
-      const { error } = await supabase.from('tasks').upsert(updates);
+      const { error } = await supabase.from("tasks").upsert(updates);
       if (!error) {
         await fetchTasks();
         await notifyTasksChanged();
@@ -111,10 +112,10 @@ export function useTasks(roomId) {
       const nextTask = tasks[currentIdx + 1];
       if (nextTask) {
         await supabase
-          .from('rooms')
+          .from("rooms")
           .update({ current_task: nextTask.name })
-          .eq('id', roomId)
-          .eq('mediator_id', useGameStore.getState().userId);
+          .eq("id", roomId)
+          .eq("mediator_id", useGameStore.getState().userId);
         setRoomInfo({ current_task: nextTask.name });
         return nextTask;
       }
@@ -128,12 +129,20 @@ export function useTasks(roomId) {
     fetchTasks();
     const channel = supabase.channel(`room:${roomId}`);
     channel
-      .on('broadcast', { event: 'tasks_changed' }, () => fetchTasks())
+      .on("broadcast", { event: "tasks_changed" }, () => fetchTasks())
       .subscribe();
     return () => {
       supabase.removeChannel(channel);
     };
   }, [roomId, fetchTasks]);
 
-  return { tasks, fetchTasks, addTask, updateTask, deleteTask, reorderTasks, advanceToNextTask };
+  return {
+    tasks,
+    fetchTasks,
+    addTask,
+    updateTask,
+    deleteTask,
+    reorderTasks,
+    advanceToNextTask,
+  };
 }

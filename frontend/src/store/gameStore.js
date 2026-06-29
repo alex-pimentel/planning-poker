@@ -1,18 +1,18 @@
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
-import { DECK_MAP, ROOM_STATUS } from '../lib/constants';
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
+import { DECK_MAP, ROOM_STATUS } from "../lib/constants";
 
 const initialState = {
   roomInfo: {
     id: null,
-    room_code: '',
+    room_code: "",
     status: ROOM_STATUS.VOTING,
-    current_task: 'Initial Task',
+    current_task: "Initial Task",
     mediator_id: null,
-    deck_type: 'fibonacci',
+    deck_type: "fibonacci",
   },
   userId: null,
-  userName: '',
+  userName: "",
   isMediator: false,
   mediatorVoting: false,
   participants: {},
@@ -25,7 +25,7 @@ const initialState = {
 };
 
 const persistConfig = {
-  name: 'planning-poker-session',
+  name: "planning-poker-session",
   partialize: (state) => ({
     roomInfo: state.roomInfo,
     userId: state.userId,
@@ -52,7 +52,8 @@ export const useGameStore = create(
 
       setMediatorVoting: (voting) => set({ mediatorVoting: voting }),
 
-      toggleMediatorVoting: () => set((state) => ({ mediatorVoting: !state.mediatorVoting })),
+      toggleMediatorVoting: () =>
+        set((state) => ({ mediatorVoting: !state.mediatorVoting })),
 
       setParticipants: (participants) => set({ participants }),
 
@@ -64,7 +65,8 @@ export const useGameStore = create(
 
       setGroups: (groups) => set({ groups }),
 
-      setParticipantGroupMap: (participantGroupMap) => set({ participantGroupMap }),
+      setParticipantGroupMap: (participantGroupMap) =>
+        set({ participantGroupMap }),
 
       setError: (error) => set({ error }),
 

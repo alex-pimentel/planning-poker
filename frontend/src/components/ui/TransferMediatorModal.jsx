@@ -1,7 +1,14 @@
-import { useState } from 'react';
+import { useState } from "react";
 
-export default function TransferMediatorModal({ participants, mediatorId, onTransfer, onClose }) {
-  const entries = Object.values(participants).filter((p) => p.user_name && p.user_id !== mediatorId);
+export default function TransferMediatorModal({
+  participants,
+  mediatorId,
+  onTransfer,
+  onClose,
+}) {
+  const entries = Object.values(participants).filter(
+    (p) => p.user_name && p.user_id !== mediatorId,
+  );
   const [target, setTarget] = useState(null);
   const [confirming, setConfirming] = useState(false);
 
@@ -14,13 +21,25 @@ export default function TransferMediatorModal({ participants, mediatorId, onTran
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
       <div className="glass-panel p-6 w-full max-w-sm space-y-4">
         <div className="flex items-center justify-between">
-          <h3 className="text-sm font-semibold text-slate-200">Transfer Mediator</h3>
+          <h3 className="text-sm font-semibold text-slate-200">
+            Transfer Mediator
+          </h3>
           <button
             onClick={onClose}
             className="p-1 rounded hover:bg-white/10 text-slate-500 hover:text-white transition-colors"
           >
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            <svg
+              className="w-4 h-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
             </svg>
           </button>
         </div>
@@ -37,7 +56,9 @@ export default function TransferMediatorModal({ participants, mediatorId, onTran
               </button>
             ))}
             {entries.length === 0 && (
-              <p className="text-sm text-slate-500 text-center py-4">No other participants available.</p>
+              <p className="text-sm text-slate-500 text-center py-4">
+                No other participants available.
+              </p>
             )}
           </div>
         )}
@@ -45,8 +66,11 @@ export default function TransferMediatorModal({ participants, mediatorId, onTran
         {confirming && target && (
           <div className="space-y-3">
             <p className="text-sm text-slate-300">
-              Transfer mediator to{' '}
-              <span className="text-amber-400 font-semibold">{target.user_name}</span>?
+              Transfer mediator to{" "}
+              <span className="text-amber-400 font-semibold">
+                {target.user_name}
+              </span>
+              ?
             </p>
             <div className="flex gap-2">
               <button
@@ -59,7 +83,10 @@ export default function TransferMediatorModal({ participants, mediatorId, onTran
                 Confirm
               </button>
               <button
-                onClick={() => { setTarget(null); setConfirming(false); }}
+                onClick={() => {
+                  setTarget(null);
+                  setConfirming(false);
+                }}
                 className="flex-1 text-sm px-4 py-2 rounded-lg bg-white/5 hover:bg-white/10 text-slate-400 transition-colors"
               >
                 Cancel

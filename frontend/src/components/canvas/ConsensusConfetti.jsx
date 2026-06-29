@@ -1,6 +1,15 @@
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo } from "react";
 
-const COLORS = ['#fbbf24', '#f59e0b', '#ef4444', '#10b981', '#3b82f6', '#a855f7', '#ec4899', '#06b6d4'];
+const COLORS = [
+  "#fbbf24",
+  "#f59e0b",
+  "#ef4444",
+  "#10b981",
+  "#3b82f6",
+  "#a855f7",
+  "#ec4899",
+  "#06b6d4",
+];
 
 function randomBetween(a, b) {
   return a + Math.random() * (b - a);
@@ -46,7 +55,7 @@ export default function ConsensusConfetti({ onDone }) {
             background: p.color,
             animationDelay: `${p.delay}s`,
             animationDuration: `${p.duration}s`,
-            borderRadius: Math.random() > 0.5 ? '50%' : '2px',
+            borderRadius: Math.random() > 0.5 ? "50%" : "2px",
             transform: `rotate(${p.rotation}deg)`,
           }}
         />
