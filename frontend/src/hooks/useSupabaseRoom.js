@@ -47,6 +47,9 @@ export function useSupabaseRoom(roomId, userId, userName) {
           if (payload.new.status === ROOM_STATUS.RESET) {
             clearTable();
           }
+          if (payload.new.status === ROOM_STATUS.VOTING) {
+            setLocalVote(null);
+          }
         },
       )
       .subscribe();
@@ -96,7 +99,7 @@ export function useSupabaseRoom(roomId, userId, userName) {
       supabase.removeChannel(dbRoomSub);
       supabase.removeChannel(dbVoteSub);
     };
-  }, [roomId, userId, userName, setRoomInfo, setParticipants, setIsMediator, clearTable, fetchLatestVotes]);
+  }, [roomId, userId, userName, setRoomInfo, setParticipants, setLocalVote, setIsMediator, clearTable, fetchLatestVotes]);
 
   const castVote = useCallback(
     async (value) => {

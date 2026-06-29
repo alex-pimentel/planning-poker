@@ -1,10 +1,10 @@
-import { useState, useRef } from 'react';
+import { useState, useMemo, useRef } from 'react';
 import { useGameStore } from '../../store/gameStore';
 import Select from './Select';
 import ConfirmModal from './ConfirmModal';
 
 
-export default function TaskListPanel({ tasks, groups, onAdd, onUpdate, onDelete, onReorder, isMediator }) {
+export default function TaskListPanel({ tasks, groups, onAdd, onUpdate, onDelete, onReorder, onSelectTask, isMediator }) {
   const { roomInfo } = useGameStore();
   const [newTaskName, setNewTaskName] = useState('');
   const [newTaskGroup, setNewTaskGroup] = useState('');
@@ -56,6 +56,12 @@ export default function TaskListPanel({ tasks, groups, onAdd, onUpdate, onDelete
 
   const currentTaskName = roomInfo.current_task;
 
+  const sortedTasks = useMemo(() => {
+    const completed = tasks.filter((t) => t.final_score);
+    const pending = tasks.filter((t) => !t.final_score);
+    return [...completed, ...pending];
+  }, [tasks]);
+
   if (tasks.length === 0 && !isMediator) return null;
 
   return (
@@ -105,9 +111,9 @@ export default function TaskListPanel({ tasks, groups, onAdd, onUpdate, onDelete
             </div>
           )}
 
-          {tasks.length > 0 && (
+          {sortedTasks.length > 0 && (
             <div className="space-y-0.5 overflow-y-auto flex-1 min-h-0 mt-2 scrollbar-custom">
-                  {tasks.map((task, index) => {
+              {sortedTasks.map((task, index) => {
                 const isCurrent = task.name === currentTaskName;
                 const isEditing = editingId === task.id;
                 const taskGroup = groups.find((g) => g.id === task.group_id);
@@ -166,6 +172,16 @@ export default function TaskListPanel({ tasks, groups, onAdd, onUpdate, onDelete
 
                     {isCurrent && (
                       <span className="text-[9px] text-poker-400 font-medium shrink-0">◉</span>
+                    )}
+
+                    {!isCurrent && !task.final_score && onSelectTask && (
+                      <button
+                        onClick={() => onSelectTask(task.name)}
+                        className="text-[9px] px-1.5 py-0.5 rounded bg-poker-500/20 text-poker-300 hover:bg-poker-500/30 shrink-0 transition-colors"
+                        title="Vote on this task"
+                      >
+                        Vote
+                      </button>
                     )}
 
                     {isMediator && (

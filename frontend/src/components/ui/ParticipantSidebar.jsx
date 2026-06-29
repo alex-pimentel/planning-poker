@@ -49,14 +49,13 @@ export default function ParticipantSidebar({ onKick, onOpenTransferModal, groups
     return (
       <div key={p.user_id} className={itemClass}>
         <div className="sidebar-item-left">
-          <span className={`sidebar-dot ${hasVoted ? 'dot-voted' : 'dot-pending'}`} />
+          <span className={`sidebar-status ${hasVoted ? 'status-voted' : 'status-pending'}`}>
+            {hasVoted ? '✓' : '—'}
+          </span>
           <span className="sidebar-name">{p.user_name}</span>
           {isMed && <span className="mediator-tag">Mediator</span>}
         </div>
         <div className="flex items-center gap-1">
-          <span className={`sidebar-status ${hasVoted ? 'status-voted' : 'status-pending'}`}>
-            {hasVoted ? '✓' : '—'}
-          </span>
           {isMed && onOpenTransferModal && (
             <button
               onClick={onOpenTransferModal}

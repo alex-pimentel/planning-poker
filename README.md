@@ -146,17 +146,21 @@ planning-poker/
 ├── frontend/
 │   ├── src/
 │   │   ├── components/
-│   │   │   ├── canvas/            # Game table (CSS green felt)
-│   │   │   │   └── GameTable.jsx       # Participant slots + deck row
-│   │   │   └── ui/                # 2D interface panels
-│   │   │       ├── CreateRoom.jsx
-│   │   │       ├── JoinRoom.jsx
-│   │   │       ├── RoomInfo.jsx
-│   │   │       ├── VoteResults.jsx
-│   │   │       ├── MediatorControls.jsx
-│   │   │       ├── ParticipantSidebar.jsx
-│   │   │       ├── Card2D.jsx
-│   │   │       └── Select.jsx
+ │   │   │   ├── canvas/            # Game table (CSS green felt)
+ │   │   │   │   ├── GameTable.jsx       # Participant slots + deck row
+ │   │   │   │   └── ConsensusConfetti.jsx  # CSS confetti on consensus
+ │   │   │   └── ui/                # 2D interface panels
+ │   │   │       ├── CreateRoom.jsx
+ │   │   │       ├── JoinRoom.jsx
+ │   │   │       ├── RoomInfo.jsx
+ │   │   │       ├── VoteResults.jsx
+ │   │   │       ├── MediatorControls.jsx
+ │   │   │       ├── ParticipantSidebar.jsx
+ │   │   │       ├── TaskListPanel.jsx
+ │   │   │       ├── Card2D.jsx
+ │   │   │       ├── Select.jsx
+ │   │   │       ├── ConfirmModal.jsx
+ │   │   │       └── TransferMediatorModal.jsx
 │   │   ├── hooks/
 │   │   │   ├── useSupabaseRoom.js  # Realtime + Presence orchestration
 │   │   │   └── useRoomActions.js   # CRUD operations for rooms
@@ -184,7 +188,6 @@ planning-poker/
 │
 ├── Makefile           # Unified command interface
 ├── AGENTS.md          # OpenCode/Claude agent instructions
-├── instructions.md    # Project blueprint reference
 └── README.md
 ```
 

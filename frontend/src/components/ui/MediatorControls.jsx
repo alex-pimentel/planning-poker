@@ -81,7 +81,12 @@ export default function MediatorControls({ tasks, onSetFinalScore }) {
                            focus:outline-none focus:ring-1 focus:ring-poker-500"
               />
             </div>
-            <button onClick={handleConfirmScore} className="glass-button w-full text-xs px-3 py-1.5">
+            <button
+              onClick={handleConfirmScore}
+              disabled={!finalScore.trim()}
+              className="glass-button w-full text-xs px-3 py-1.5"
+              title={!finalScore.trim() ? 'Enter a final score first' : ''}
+            >
               {hasNextTask ? 'Confirm & Next' : 'Confirm & New'}
             </button>
           </div>

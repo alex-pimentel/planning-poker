@@ -37,7 +37,10 @@ function HomeScreen({ onNavigate }) {
 function RoomScreen({ onLeave }) {
   const { roomInfo, userId, userName, isMediator, participants } = useGameStore();
   const { castVote, leaveRoom } = useSupabaseRoom(roomInfo.id, userId, userName);
-  const { kickParticipant, transferMediator } = useRoomActions();
+  const { kickParticipant, transferMediator, advanceRound } = useRoomActions();
+  const handleSelectTask = useCallback(async (taskName) => {
+    await advanceRound(taskName);
+  }, [advanceRound]);
   const {
     tasks,
     addTask,
@@ -57,7 +60,10 @@ function RoomScreen({ onLeave }) {
   } = useGroups(roomInfo.id);
   const [showGroupManager, setShowGroupManager] = useState(false);
   const [showTransferModal, setShowTransferModal] = useState(false);
-  const [bottomHeight, setBottomHeight] = useState(200);
+  const [bottomHeight, setBottomHeight] = useState(() => {
+    const saved = localStorage.getItem('planning-poker-bottom-height');
+    return saved ? parseInt(saved, 10) : 200;
+  });
   const resizing = useRef(false);
 
   const handleMouseDown = useCallback((e) => {
@@ -71,6 +77,7 @@ function RoomScreen({ onLeave }) {
       const delta = startY - ev.clientY;
       const newH = Math.max(120, Math.min(500, startH + delta));
       setBottomHeight(newH);
+      localStorage.setItem('planning-poker-bottom-height', newH);
     };
 
     const onMouseUp = () => {
@@ -132,15 +139,16 @@ function RoomScreen({ onLeave }) {
       />
 
       <div className="bottom-controls" style={{ height: bottomHeight }}>
-        <TaskListPanel
-          tasks={tasks}
-          groups={groups}
-          onAdd={addTask}
-          onUpdate={updateTask}
-          onDelete={deleteTask}
-          onReorder={reorderTasks}
-          isMediator={isMediator}
-        />
+          <TaskListPanel
+            tasks={tasks}
+            groups={groups}
+            onAdd={addTask}
+            onUpdate={updateTask}
+            onDelete={deleteTask}
+            onReorder={reorderTasks}
+            onSelectTask={isMediator ? handleSelectTask : undefined}
+            isMediator={isMediator}
+          />
         <div className="flex flex-col gap-3 min-w-0">
           <VoteResults groups={groups} participantGroupMap={participantGroupMap} />
           {isMediator && (
