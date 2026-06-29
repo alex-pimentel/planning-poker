@@ -5,7 +5,7 @@
 -- Groups table (must exist before tasks FK)
 -- ──────────────────────────────────────────────
 CREATE TABLE public.groups (
-    id          UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id          UUID PRIMARY KEY DEFAULT extensions.uuid_generate_v4(),
     room_id     UUID REFERENCES public.rooms(id) ON DELETE CASCADE NOT NULL,
     name        TEXT NOT NULL,
     created_at  TIMESTAMPTZ DEFAULT NOW() NOT NULL,
@@ -72,7 +72,7 @@ CREATE POLICY "Mediator can delete tasks"
 -- Participant-Group assignments
 -- ──────────────────────────────────────────────
 CREATE TABLE public.participant_groups (
-    id          UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    id          UUID PRIMARY KEY DEFAULT extensions.uuid_generate_v4(),
     room_id     UUID REFERENCES public.rooms(id) ON DELETE CASCADE NOT NULL,
     user_id     UUID NOT NULL,
     group_id    UUID REFERENCES public.groups(id) ON DELETE CASCADE NOT NULL,
