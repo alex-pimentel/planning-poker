@@ -22,10 +22,13 @@ function ParticipantSlot({ name, isMediator, voteValue, isRevealed, isLocal, sty
   );
 }
 
-export default function GameTable({ onCardClick }) {
+export default function GameTable({ onCardClick, tasks, groups, participantGroupMap }) {
   const { votes, localVote, roomInfo, participants, userId, getDeck } = useGameStore();
   const deck = getDeck();
   const isRevealed = roomInfo.status === ROOM_STATUS.REVEALED;
+
+  const currentTaskObj = tasks.find((t) => t.name === roomInfo.current_task);
+  const taskGroupId = currentTaskObj?.group_id || null;
 
   const participantEntries = useMemo(
     () => Object.entries(participants).filter(([, p]) => p.user_name),
@@ -49,8 +52,19 @@ export default function GameTable({ onCardClick }) {
     return map;
   }, [votes]);
 
+  const isInTaskGroup = !taskGroupId || participantGroupMap[userId] === taskGroupId;
+
   return (
     <div className="game-table">
+      {taskGroupId && !isInTaskGroup && (
+        <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/40 rounded-2xl">
+          <div className="text-center">
+            <p className="text-lg font-medium text-white">Waiting for {groups.find((g) => g.id === taskGroupId)?.name || 'assigned'} team</p>
+            <p className="text-sm text-slate-400 mt-1">This task is reserved for a specific group.</p>
+          </div>
+        </div>
+      )}
+
       {/* Participant slots around the table */}
       {slots.map(({ key, participant: p, angle }) => {
         const cx = 50 + Math.cos(angle) * 38;
@@ -76,7 +90,7 @@ export default function GameTable({ onCardClick }) {
               key={value}
               value={value}
               isSelected={value === localVote}
-              onClick={() => onCardClick(value)}
+              onClick={() => isInTaskGroup && onCardClick(value)}
               size="md"
             />
           ))}

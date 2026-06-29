@@ -17,7 +17,9 @@ const initialState = {
   participants: {},
   localVote: null,
   votes: [],
-  taskHistory: [],
+  tasks: [],
+  groups: [],
+  participantGroupMap: {},
   error: null,
 };
 
@@ -52,7 +54,11 @@ export const useGameStore = create(
 
       setVotes: (votes) => set({ votes }),
 
-      setTaskHistory: (taskHistory) => set({ taskHistory }),
+      setTasks: (tasks) => set({ tasks }),
+
+      setGroups: (groups) => set({ groups }),
+
+      setParticipantGroupMap: (participantGroupMap) => set({ participantGroupMap }),
 
       setError: (error) => set({ error }),
 

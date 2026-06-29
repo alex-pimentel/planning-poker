@@ -2,6 +2,8 @@ import { useState, useCallback, useEffect } from 'react';
 import { useGameStore } from './store/gameStore';
 import { useSupabaseRoom } from './hooks/useSupabaseRoom';
 import { useRoomActions } from './hooks/useRoomActions';
+import { useTasks } from './hooks/useTasks';
+import { useGroups } from './hooks/useGroups';
 import CreateRoom from './components/ui/CreateRoom';
 import JoinRoom from './components/ui/JoinRoom';
 import GameTable from './components/canvas/GameTable';
@@ -9,6 +11,8 @@ import RoomInfo from './components/ui/RoomInfo';
 import VoteResults from './components/ui/VoteResults';
 import MediatorControls from './components/ui/MediatorControls';
 import ParticipantSidebar from './components/ui/ParticipantSidebar';
+import TaskListPanel from './components/ui/TaskListPanel';
+import GroupManager from './components/ui/GroupManager';
 
 function HomeScreen({ onNavigate }) {
   return (
@@ -30,36 +34,105 @@ function HomeScreen({ onNavigate }) {
 }
 
 function RoomScreen({ onLeave }) {
-  const { roomInfo, userId, userName, isMediator } = useGameStore();
+  const { roomInfo, userId, userName, isMediator, participants } = useGameStore();
   const { castVote, leaveRoom } = useSupabaseRoom(roomInfo.id, userId, userName);
   const { kickParticipant } = useRoomActions();
+  const {
+    tasks,
+    addTask,
+    updateTask,
+    deleteTask,
+    reorderTasks,
+  } = useTasks(roomInfo.id);
+  const {
+    groups,
+    participantGroupMap,
+    addGroup,
+    renameGroup,
+    deleteGroup,
+    assignParticipant,
+    removeParticipant,
+    joinGroup,
+  } = useGroups(roomInfo.id);
+  const [showGroupManager, setShowGroupManager] = useState(false);
 
   const handleLeave = useCallback(async () => {
     await leaveRoom();
     onLeave();
   }, [leaveRoom, onLeave]);
 
+  const handleSetFinalScore = useCallback(
+    async (taskId, score) => {
+      await updateTask(taskId, { final_score: score || null });
+    },
+    [updateTask],
+  );
+
   return (
     <div className="h-screen w-screen flex flex-col">
       <div className="flex-none px-4 pt-4 pb-2">
-        <RoomInfo onLeave={handleLeave} />
+        <RoomInfo
+          onLeave={handleLeave}
+          tasks={tasks}
+          groups={groups}
+        />
       </div>
 
       <div className="flex-1 min-h-0 flex gap-0 px-4 pb-2">
         <div className="flex-none w-48">
-          <ParticipantSidebar onKick={isMediator ? kickParticipant : undefined} />
+          <ParticipantSidebar
+            onKick={isMediator ? kickParticipant : undefined}
+            groups={groups}
+            participantGroupMap={participantGroupMap}
+            onJoinGroup={joinGroup}
+            onOpenGroupManager={isMediator ? () => setShowGroupManager(true) : undefined}
+          />
         </div>
         <div className="flex-1 min-w-0 relative rounded-2xl overflow-hidden">
-          <GameTable onCardClick={castVote} />
+          <GameTable
+            onCardClick={castVote}
+            tasks={tasks}
+            groups={groups}
+            participantGroupMap={participantGroupMap}
+          />
         </div>
       </div>
 
       <div className="bottom-controls">
-        <div className="space-y-3">
-          <VoteResults />
-          {isMediator && <MediatorControls />}
+        <TaskListPanel
+          tasks={tasks}
+          groups={groups}
+          onAdd={addTask}
+          onUpdate={updateTask}
+          onDelete={deleteTask}
+          onReorder={reorderTasks}
+          isMediator={isMediator}
+        />
+        <div className="flex flex-col gap-3 min-w-0">
+          <VoteResults groups={groups} participantGroupMap={participantGroupMap} />
+          {isMediator && (
+            <MediatorControls
+              tasks={tasks}
+              onSetFinalScore={handleSetFinalScore}
+            />
+          )}
         </div>
       </div>
+
+      {showGroupManager && (
+        <GroupManager
+          groups={groups}
+          participants={participants}
+          participantGroupMap={participantGroupMap}
+          onAddGroup={addGroup}
+          onRenameGroup={renameGroup}
+          onDeleteGroup={deleteGroup}
+          onAssignParticipant={assignParticipant}
+          onRemoveParticipant={removeParticipant}
+          onClose={() => setShowGroupManager(false)}
+          isMediator={isMediator}
+        />
+      )}
     </div>
   );
 }
@@ -78,7 +151,6 @@ export default function App() {
       return;
     }
 
-    // Restore session on refresh
     const { roomInfo } = useGameStore.getState();
     if (roomInfo?.id) {
       setScreen('room');

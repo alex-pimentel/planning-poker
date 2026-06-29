@@ -3,14 +3,25 @@ import { useGameStore } from '../../store/gameStore';
 import { ROOM_STATUS } from '../../lib/constants';
 import { cardValueToNumber } from '../../lib/utils';
 
-export default function VoteResults() {
+export default function VoteResults({ groups, participantGroupMap }) {
   const { votes, participants, roomInfo } = useGameStore();
   const isRevealed = roomInfo.status === ROOM_STATUS.REVEALED;
 
-  const presentVotes = useMemo(
-    () => votes.filter((v) => v.user_id in participants),
-    [votes, participants],
-  );
+  const currentTaskObj = useGameStore((s) => s.tasks).find((t) => t.name === roomInfo.current_task);
+  const taskGroup = currentTaskObj?.group_id
+    ? groups.find((g) => g.id === currentTaskObj.group_id)
+    : null;
+
+  const presentVotes = useMemo(() => {
+    let filtered = votes.filter((v) => v.user_id in participants);
+    if (taskGroup) {
+      const groupUserIds = Object.entries(participantGroupMap)
+        .filter(([, gId]) => gId === taskGroup.id)
+        .map(([uId]) => uId);
+      filtered = filtered.filter((v) => groupUserIds.includes(v.user_id));
+    }
+    return filtered;
+  }, [votes, participants, taskGroup, participantGroupMap]);
 
   const stats = useMemo(() => {
     if (!presentVotes?.length) return null;
@@ -31,6 +42,12 @@ export default function VoteResults() {
   return (
     <div className="glass-panel p-4 space-y-3">
       <h3 className="text-sm font-semibold text-slate-300">Votes</h3>
+
+      {taskGroup && (
+        <div className="text-xs text-slate-400">
+          Group: <span className="text-white font-medium">{taskGroup.name}</span>
+        </div>
+      )}
 
       {isRevealed && stats && (
         <div className="flex gap-4 text-sm">

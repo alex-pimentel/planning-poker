@@ -27,6 +27,13 @@ export function useRoomActions() {
 
         if (error) throw error;
 
+        const { error: taskError } = await supabase.from('tasks').insert({
+          room_id: data.id,
+          name: data.current_task,
+          sort_order: 0,
+        });
+        if (taskError) throw taskError;
+
         setUserId(user.id);
         setIsMediator(true);
         setRoomInfo(data);
@@ -121,6 +128,32 @@ export function useRoomActions() {
     [setError, clearTable],
   );
 
+  const advanceRound = useCallback(
+    async (nextTaskName) => {
+      try {
+        const roomId = useGameStore.getState().roomInfo.id;
+
+        await supabase.from('votes').delete().eq('room_id', roomId);
+
+        const updates = { status: ROOM_STATUS.VOTING };
+        if (nextTaskName) updates.current_task = nextTaskName;
+
+        const { error } = await supabase
+          .from('rooms')
+          .update(updates)
+          .eq('id', roomId)
+          .eq('mediator_id', useGameStore.getState().userId);
+
+        if (error) throw error;
+
+        clearTable();
+      } catch (err) {
+        setError(err.message);
+      }
+    },
+    [setError, clearTable],
+  );
+
   const kickParticipant = useCallback(async (targetUserId) => {
     const store = useGameStore.getState();
     const roomId = store.roomInfo.id;
@@ -140,5 +173,5 @@ export function useRoomActions() {
     if (data) store.setVotes(data);
   }, []);
 
-  return { createRoom, joinRoom, revealVotes, resetRound, kickParticipant };
+  return { createRoom, joinRoom, revealVotes, resetRound, advanceRound, kickParticipant };
 }

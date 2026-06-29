@@ -218,7 +218,7 @@
   }
 
   .sidebar-list {
-    @apply flex-1 overflow-y-auto px-2 py-1 space-y-0.5;
+    @apply flex-1 overflow-y-auto px-2 py-1 space-y-0.5 min-h-0;
   }
 
   .sidebar-item {
@@ -281,5 +281,27 @@
 @layer utilities {
   .text-glow {
     text-shadow: 0 0 20px rgba(234, 179, 8, 0.5);
+  }
+
+  .scrollbar-custom::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .scrollbar-custom::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .scrollbar-custom::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 3px;
+  }
+
+  .scrollbar-custom::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.25);
+  }
+
+  .scrollbar-custom {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
   }
 }
