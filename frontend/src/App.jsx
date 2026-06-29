@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { useGameStore } from './store/gameStore';
 import { useSupabaseRoom } from './hooks/useSupabaseRoom';
 import { useRoomActions } from './hooks/useRoomActions';
@@ -13,6 +13,7 @@ import MediatorControls from './components/ui/MediatorControls';
 import ParticipantSidebar from './components/ui/ParticipantSidebar';
 import TaskListPanel from './components/ui/TaskListPanel';
 import GroupManager from './components/ui/GroupManager';
+import TransferMediatorModal from './components/ui/TransferMediatorModal';
 
 function HomeScreen({ onNavigate }) {
   return (
@@ -36,7 +37,7 @@ function HomeScreen({ onNavigate }) {
 function RoomScreen({ onLeave }) {
   const { roomInfo, userId, userName, isMediator, participants } = useGameStore();
   const { castVote, leaveRoom } = useSupabaseRoom(roomInfo.id, userId, userName);
-  const { kickParticipant } = useRoomActions();
+  const { kickParticipant, transferMediator } = useRoomActions();
   const {
     tasks,
     addTask,
@@ -55,6 +56,32 @@ function RoomScreen({ onLeave }) {
     joinGroup,
   } = useGroups(roomInfo.id);
   const [showGroupManager, setShowGroupManager] = useState(false);
+  const [showTransferModal, setShowTransferModal] = useState(false);
+  const [bottomHeight, setBottomHeight] = useState(200);
+  const resizing = useRef(false);
+
+  const handleMouseDown = useCallback((e) => {
+    e.preventDefault();
+    resizing.current = true;
+    const startY = e.clientY;
+    const startH = bottomHeight;
+
+    const onMouseMove = (ev) => {
+      if (!resizing.current) return;
+      const delta = startY - ev.clientY;
+      const newH = Math.max(120, Math.min(500, startH + delta));
+      setBottomHeight(newH);
+    };
+
+    const onMouseUp = () => {
+      resizing.current = false;
+      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseup', onMouseUp);
+    };
+
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onMouseUp);
+  }, [bottomHeight]);
 
   const handleLeave = useCallback(async () => {
     await leaveRoom();
@@ -78,10 +105,11 @@ function RoomScreen({ onLeave }) {
         />
       </div>
 
-      <div className="flex-1 min-h-0 flex gap-0 px-4 pb-2">
+      <div className="flex-1 min-h-0 flex gap-0 px-4 pb-0">
         <div className="flex-none w-48">
           <ParticipantSidebar
             onKick={isMediator ? kickParticipant : undefined}
+            onOpenTransferModal={isMediator ? () => setShowTransferModal(true) : undefined}
             groups={groups}
             participantGroupMap={participantGroupMap}
             onJoinGroup={joinGroup}
@@ -98,7 +126,12 @@ function RoomScreen({ onLeave }) {
         </div>
       </div>
 
-      <div className="bottom-controls">
+      <div
+        className="resize-handle"
+        onMouseDown={handleMouseDown}
+      />
+
+      <div className="bottom-controls" style={{ height: bottomHeight }}>
         <TaskListPanel
           tasks={tasks}
           groups={groups}
@@ -131,6 +164,15 @@ function RoomScreen({ onLeave }) {
           onRemoveParticipant={removeParticipant}
           onClose={() => setShowGroupManager(false)}
           isMediator={isMediator}
+        />
+      )}
+
+      {showTransferModal && (
+        <TransferMediatorModal
+          participants={participants}
+          mediatorId={roomInfo.mediator_id}
+          onTransfer={transferMediator}
+          onClose={() => setShowTransferModal(false)}
         />
       )}
     </div>

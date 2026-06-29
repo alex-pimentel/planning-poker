@@ -8,6 +8,7 @@ export function useSupabaseRoom(roomId, userId, userName) {
   const setVotes = useGameStore((s) => s.setVotes);
   const setParticipants = useGameStore((s) => s.setParticipants);
   const setLocalVote = useGameStore((s) => s.setLocalVote);
+  const setIsMediator = useGameStore((s) => s.setIsMediator);
   const clearTable = useGameStore((s) => s.clearTable);
   const setError = useGameStore((s) => s.setError);
 
@@ -40,6 +41,9 @@ export function useSupabaseRoom(roomId, userId, userName) {
         },
         (payload) => {
           setRoomInfo(payload.new);
+          if (payload.new.mediator_id) {
+            setIsMediator(payload.new.mediator_id === userId);
+          }
           if (payload.new.status === ROOM_STATUS.RESET) {
             clearTable();
           }
@@ -92,7 +96,7 @@ export function useSupabaseRoom(roomId, userId, userName) {
       supabase.removeChannel(dbRoomSub);
       supabase.removeChannel(dbVoteSub);
     };
-  }, [roomId, userId, userName, setRoomInfo, setParticipants, clearTable, fetchLatestVotes]);
+  }, [roomId, userId, userName, setRoomInfo, setParticipants, setIsMediator, clearTable, fetchLatestVotes]);
 
   const castVote = useCallback(
     async (value) => {

@@ -154,6 +154,21 @@ export function useRoomActions() {
     [setError, clearTable],
   );
 
+  const transferMediator = useCallback(async (targetUserId) => {
+    const store = useGameStore.getState();
+    const roomId = store.roomInfo.id;
+
+    const { error } = await supabase
+      .from('rooms')
+      .update({ mediator_id: targetUserId })
+      .eq('id', roomId)
+      .eq('mediator_id', store.userId);
+
+    if (error) {
+      store.setError(error.message);
+    }
+  }, []);
+
   const kickParticipant = useCallback(async (targetUserId) => {
     const store = useGameStore.getState();
     const roomId = store.roomInfo.id;
@@ -173,5 +188,5 @@ export function useRoomActions() {
     if (data) store.setVotes(data);
   }, []);
 
-  return { createRoom, joinRoom, revealVotes, resetRound, advanceRound, kickParticipant };
+  return { createRoom, joinRoom, revealVotes, resetRound, advanceRound, transferMediator, kickParticipant };
 }

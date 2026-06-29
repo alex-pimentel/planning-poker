@@ -1,8 +1,8 @@
 import { useMemo, useState } from 'react';
 import { useGameStore } from '../../store/gameStore';
 
-export default function ParticipantSidebar({ onKick, groups, participantGroupMap, onJoinGroup, onOpenGroupManager }) {
-  const { participants, votes, userId, roomInfo } = useGameStore();
+export default function ParticipantSidebar({ onKick, onOpenTransferModal, groups, participantGroupMap, onJoinGroup, onOpenGroupManager }) {
+  const { participants, votes, userId, roomInfo, mediatorVoting, toggleMediatorVoting } = useGameStore();
   const [showGroupSelect, setShowGroupSelect] = useState(false);
 
   const votesByUser = useMemo(() => {
@@ -44,17 +44,41 @@ export default function ParticipantSidebar({ onKick, groups, participantGroupMap
     const isLocal = p.user_id === userId;
     const canKick = onKick && !isMed && !isLocal;
 
+    const itemClass = `sidebar-item ${isLocal ? 'sidebar-item-local' : ''} ${isMed ? 'sidebar-item-mediator' : ''}`;
+
     return (
-      <div key={p.user_id} className={`sidebar-item ${isLocal ? 'sidebar-item-local' : ''}`}>
+      <div key={p.user_id} className={itemClass}>
         <div className="sidebar-item-left">
           <span className={`sidebar-dot ${hasVoted ? 'dot-voted' : 'dot-pending'}`} />
           <span className="sidebar-name">{p.user_name}</span>
-          {isMed && <span className="mediator-star text-[10px]">★</span>}
+          {isMed && <span className="mediator-tag">Mediator</span>}
         </div>
         <div className="flex items-center gap-1">
           <span className={`sidebar-status ${hasVoted ? 'status-voted' : 'status-pending'}`}>
             {hasVoted ? '✓' : '—'}
           </span>
+          {isMed && onOpenTransferModal && (
+            <button
+              onClick={onOpenTransferModal}
+              className="ml-1 p-0.5 rounded hover:bg-amber-500/20 text-slate-500 hover:text-amber-400 transition-colors"
+              title="Transfer mediator to another participant"
+            >
+              <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+              </svg>
+            </button>
+          )}
+          {isMed && isLocal && (
+            <button
+              onClick={toggleMediatorVoting}
+              className={`ml-1 p-0.5 rounded transition-colors ${mediatorVoting ? 'text-emerald-400 hover:bg-emerald-500/20' : 'text-slate-500 hover:bg-white/10'}`}
+              title={mediatorVoting ? 'Disable voting' : 'Enable voting'}
+            >
+              <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </button>
+          )}
           {canKick && (
             <button
               onClick={() => onKick(p.user_id)}

@@ -14,6 +14,7 @@ const initialState = {
   userId: null,
   userName: '',
   isMediator: false,
+  mediatorVoting: false,
   participants: {},
   localVote: null,
   votes: [],
@@ -30,6 +31,7 @@ const persistConfig = {
     userId: state.userId,
     userName: state.userName,
     isMediator: state.isMediator,
+    mediatorVoting: state.mediatorVoting,
   }),
 };
 
@@ -47,6 +49,10 @@ export const useGameStore = create(
       setUserName: (userName) => set({ userName }),
 
       setIsMediator: (isMediator) => set({ isMediator }),
+
+      setMediatorVoting: (voting) => set({ mediatorVoting: voting }),
+
+      toggleMediatorVoting: () => set((state) => ({ mediatorVoting: !state.mediatorVoting })),
 
       setParticipants: (participants) => set({ participants }),
 
