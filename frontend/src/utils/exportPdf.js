@@ -14,10 +14,10 @@ export function exportPdf({ roomCode, userName, tasks, groups }) {
   doc.text('Planning Poker', pageWidth / 2, 20, { align: 'center' });
 
   doc.setFontSize(10);
-  doc.text(`Sala: ${roomCode}`, 14, 32);
-  doc.text(`Exportado por: ${userName}`, 14, 39);
+  doc.text(`Room: ${roomCode}`, 14, 32);
+  doc.text(`Exported by: ${userName}`, 14, 39);
   doc.text(
-    `Data: ${new Date().toLocaleDateString('pt-BR', {
+    `Date: ${new Date().toLocaleDateString('en-US', {
       day: '2-digit',
       month: '2-digit',
       year: 'numeric',
@@ -42,7 +42,7 @@ export function exportPdf({ roomCode, userName, tasks, groups }) {
 
   doc.autoTable({
     startY: 56,
-    head: [['#', 'Tarefa', 'Pontuação']],
+    head: [['#', 'Task', 'Score']],
     body: rows,
     styles: { fontSize: 10 },
     headStyles: { fillColor: [59, 130, 246] },
@@ -56,7 +56,7 @@ export function exportPdf({ roomCode, userName, tasks, groups }) {
 
   const finalY = doc.lastAutoTable.finalY + 10;
   doc.setFontSize(9);
-  doc.text(`Total: ${scored.length} tarefa${scored.length !== 1 ? 's' : ''}`, 14, finalY);
+  doc.text(`Total: ${scored.length} task${scored.length !== 1 ? 's' : ''}`, 14, finalY);
 
   doc.save(`planning-poker-${roomCode}.pdf`);
 }
