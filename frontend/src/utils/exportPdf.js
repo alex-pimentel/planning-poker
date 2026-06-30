@@ -1,5 +1,7 @@
 import jsPDF from 'jspdf';
-import 'jspdf-autotable';
+import { applyPlugin } from 'jspdf-autotable';
+
+applyPlugin(jsPDF);
 
 export function exportPdf({ roomCode, userName, tasks, groups }) {
   const scored = tasks.filter((t) => t.final_score);

@@ -20,6 +20,10 @@ vi.mock('jspdf', () => {
   return { default: vi.fn(() => mockDoc) };
 });
 
+vi.mock('jspdf-autotable', () => ({
+  applyPlugin: vi.fn(),
+}));
+
 function getDocInstance() {
   return jsPDF.mock.results[jsPDF.mock.results.length - 1]?.value;
 }

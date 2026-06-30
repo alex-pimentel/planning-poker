@@ -19,7 +19,6 @@ export default function TaskListPanel({
   const [newTaskGroup, setNewTaskGroup] = useState('');
   const [editingId, setEditingId] = useState(null);
   const [editName, setEditName] = useState('');
-  const [collapsed, setCollapsed] = useState(false);
   const [exporting, setExporting] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState(null); // task object when confirming
   const dragItem = useRef(null);
@@ -81,32 +80,25 @@ export default function TaskListPanel({
           Tasks{' '}
           {tasks.length > 0 && <span className="text-slate-600 font-normal">({tasks.length})</span>}
         </h3>
-        {tasks.some((t) => t.final_score) && (
-          <button
-            onClick={async () => {
-              setExporting(true);
-              await new Promise((r) => setTimeout(r, 50));
-              exportPdf({ roomCode: roomInfo.room_code, userName, tasks, groups });
-              setExporting(false);
-            }}
-            disabled={exporting}
-            className="text-[10px] px-2 py-0.5 rounded bg-emerald-600/20 text-emerald-400
-                       hover:bg-emerald-600/30 disabled:opacity-50 disabled:cursor-wait
-                       transition-colors shrink-0"
-          >
-            {exporting ? 'Gerando...' : 'Exportar PDF'}
-          </button>
-        )}
-        <button
-          onClick={() => setCollapsed(!collapsed)}
-          className="text-[10px] text-slate-500 hover:text-white transition-colors"
-        >
-          {collapsed ? 'Show' : 'Hide'}
-        </button>
+        <div className="flex items-center gap-1.5">
+          {tasks.some((t) => t.final_score) && (
+            <button
+              onClick={async () => {
+                setExporting(true);
+                await new Promise((r) => setTimeout(r, 50));
+                exportPdf({ roomCode: roomInfo.room_code, userName, tasks, groups });
+                setExporting(false);
+              }}
+              disabled={exporting}
+              className="glass-button text-xs px-2 py-1 rounded-md shrink-0"
+            >
+              {exporting ? 'Gerando...' : 'Exportar PDF'}
+            </button>
+          )}
+        </div>
       </div>
 
-      {!collapsed && (
-        <div className="flex flex-col min-h-0 flex-1 mt-2 overflow-hidden">
+      <div className="flex flex-col min-h-0 flex-1 mt-2 overflow-hidden">
           {isMediator && (
             <div className="flex gap-1.5 shrink-0">
               <input
@@ -270,7 +262,6 @@ export default function TaskListPanel({
             </p>
           )}
         </div>
-      )}
 
       {deleteConfirm && (
         <ConfirmModal
