@@ -31,10 +31,15 @@ export default function CreateRoom({ onCreated }) {
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
       <div className="glass-panel p-8 w-full max-w-md">
-        <a href="http://www.agenteresolve.com.br"  target="_blank" rel="noopener noreferrer" className="p-2">
+        <a
+          href="http://www.agenteresolve.com.br"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="p-2"
+        >
           <img src="/logo_agenteresolve.png" alt="Planning Poker" className="h-12 mx-auto" />
         </a>
-        
+
         <h1 className="text-3xl font-bold text-center mb-2 text-glow">Planning Poker</h1>
         <p className="text-slate-400 text-center mb-8">Create a new planning session</p>
 
