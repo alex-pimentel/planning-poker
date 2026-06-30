@@ -2,6 +2,7 @@ import { useState, useMemo, useRef } from 'react';
 import { useGameStore } from '../../store/gameStore';
 import Select from './Select';
 import ConfirmModal from './ConfirmModal';
+import { exportPdf } from '../../utils/exportPdf';
 
 export default function TaskListPanel({
   tasks,
@@ -13,12 +14,12 @@ export default function TaskListPanel({
   onSelectTask,
   isMediator,
 }) {
-  const { roomInfo } = useGameStore();
+  const { roomInfo, userName } = useGameStore();
   const [newTaskName, setNewTaskName] = useState('');
   const [newTaskGroup, setNewTaskGroup] = useState('');
   const [editingId, setEditingId] = useState(null);
   const [editName, setEditName] = useState('');
-  const [collapsed, setCollapsed] = useState(false);
+  const [exporting, setExporting] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState(null); // task object when confirming
   const dragItem = useRef(null);
   const dragOverItem = useRef(null);
@@ -79,16 +80,25 @@ export default function TaskListPanel({
           Tasks{' '}
           {tasks.length > 0 && <span className="text-slate-600 font-normal">({tasks.length})</span>}
         </h3>
-        <button
-          onClick={() => setCollapsed(!collapsed)}
-          className="text-[10px] text-slate-500 hover:text-white transition-colors"
-        >
-          {collapsed ? 'Show' : 'Hide'}
-        </button>
+        <div className="flex items-center gap-1.5">
+          {tasks.some((t) => t.final_score) && (
+            <button
+              onClick={async () => {
+                setExporting(true);
+                await new Promise((r) => setTimeout(r, 50));
+                exportPdf({ roomCode: roomInfo.room_code, userName, tasks, groups });
+                setExporting(false);
+              }}
+              disabled={exporting}
+              className="glass-button text-xs px-2 py-1 rounded-md shrink-0"
+            >
+              {exporting ? 'Gerando...' : 'Exportar PDF'}
+            </button>
+          )}
+        </div>
       </div>
 
-      {!collapsed && (
-        <div className="flex flex-col min-h-0 flex-1 mt-2 overflow-hidden">
+      <div className="flex flex-col min-h-0 flex-1 mt-2 overflow-hidden">
           {isMediator && (
             <div className="flex gap-1.5 shrink-0">
               <input
@@ -252,7 +262,6 @@ export default function TaskListPanel({
             </p>
           )}
         </div>
-      )}
 
       {deleteConfirm && (
         <ConfirmModal
