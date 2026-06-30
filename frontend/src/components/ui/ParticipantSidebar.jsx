@@ -1,5 +1,5 @@
-import { useMemo, useState } from "react";
-import { useGameStore } from "../../store/gameStore";
+import { useMemo, useState } from 'react';
+import { useGameStore } from '../../store/gameStore';
 
 export default function ParticipantSidebar({
   onKick,
@@ -9,14 +9,8 @@ export default function ParticipantSidebar({
   onJoinGroup,
   onOpenGroupManager,
 }) {
-  const {
-    participants,
-    votes,
-    userId,
-    roomInfo,
-    mediatorVoting,
-    toggleMediatorVoting,
-  } = useGameStore();
+  const { participants, votes, userId, roomInfo, mediatorVoting, toggleMediatorVoting } =
+    useGameStore();
   const [showGroupSelect, setShowGroupSelect] = useState(false);
 
   const votesByUser = useMemo(() => {
@@ -48,9 +42,7 @@ export default function ParticipantSidebar({
     return { grouped: Object.values(g), ungrouped: ug };
   }, [entries, groups, participantGroupMap]);
 
-  const availableGroups = groups.filter(
-    (g) => g.id !== participantGroupMap[userId],
-  );
+  const availableGroups = groups.filter((g) => g.id !== participantGroupMap[userId]);
 
   if (entries.length === 0) return null;
 
@@ -60,15 +52,13 @@ export default function ParticipantSidebar({
     const isLocal = p.user_id === userId;
     const canKick = onKick && !isMed && !isLocal;
 
-    const itemClass = `sidebar-item ${isLocal ? "sidebar-item-local" : ""} ${isMed ? "sidebar-item-mediator" : ""}`;
+    const itemClass = `sidebar-item ${isLocal ? 'sidebar-item-local' : ''} ${isMed ? 'sidebar-item-mediator' : ''}`;
 
     return (
       <div key={p.user_id} className={itemClass}>
         <div className="sidebar-item-left">
-          <span
-            className={`sidebar-status ${hasVoted ? "status-voted" : "status-pending"}`}
-          >
-            {hasVoted ? "✓" : "—"}
+          <span className={`sidebar-status ${hasVoted ? 'status-voted' : 'status-pending'}`}>
+            {hasVoted ? '✓' : '—'}
           </span>
           <span className="sidebar-name">{p.user_name}</span>
           {isMed && <span className="mediator-tag">Mediator</span>}
@@ -80,12 +70,7 @@ export default function ParticipantSidebar({
               className="ml-1 p-0.5 rounded hover:bg-amber-500/20 text-slate-500 hover:text-amber-400 transition-colors"
               title="Transfer mediator to another participant"
             >
-              <svg
-                className="w-3 h-3"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
+              <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -98,15 +83,10 @@ export default function ParticipantSidebar({
           {isMed && isLocal && (
             <button
               onClick={toggleMediatorVoting}
-              className={`ml-1 p-0.5 rounded transition-colors ${mediatorVoting ? "text-emerald-400 hover:bg-emerald-500/20" : "text-slate-500 hover:bg-white/10"}`}
-              title={mediatorVoting ? "Disable voting" : "Enable voting"}
+              className={`ml-1 p-0.5 rounded transition-colors ${mediatorVoting ? 'text-emerald-400 hover:bg-emerald-500/20' : 'text-slate-500 hover:bg-white/10'}`}
+              title={mediatorVoting ? 'Disable voting' : 'Enable voting'}
             >
-              <svg
-                className="w-3 h-3"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
+              <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -122,12 +102,7 @@ export default function ParticipantSidebar({
               className="ml-1 p-0.5 rounded hover:bg-red-500/20 text-slate-500 hover:text-red-400 transition-colors"
               title="Remove participant"
             >
-              <svg
-                className="w-3 h-3"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
+              <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -155,7 +130,7 @@ export default function ParticipantSidebar({
             className="text-[10px] px-1.5 py-0.5 rounded bg-white/5 text-slate-400 hover:text-white transition-colors"
             title="Manage groups"
           >
-            Groups{groups.length > 0 ? ` (${groups.length})` : ""}
+            Groups{groups.length > 0 ? ` (${groups.length})` : ''}
           </button>
         )}
       </div>
@@ -164,9 +139,7 @@ export default function ParticipantSidebar({
           <div key={group.id} className="mb-2">
             <div className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider px-2 py-1">
               {group.name}
-              <span className="ml-1 text-slate-600 font-normal">
-                ({members.length})
-              </span>
+              <span className="ml-1 text-slate-600 font-normal">({members.length})</span>
             </div>
             <div className="space-y-0.5">{members.map(renderParticipant)}</div>
           </div>
@@ -176,13 +149,9 @@ export default function ParticipantSidebar({
           <div className="mb-2">
             <div className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider px-2 py-1">
               Ungrouped
-              <span className="ml-1 text-slate-600 font-normal">
-                ({ungrouped.length})
-              </span>
+              <span className="ml-1 text-slate-600 font-normal">({ungrouped.length})</span>
             </div>
-            <div className="space-y-0.5">
-              {ungrouped.map(renderParticipant)}
-            </div>
+            <div className="space-y-0.5">{ungrouped.map(renderParticipant)}</div>
           </div>
         )}
       </div>
@@ -192,7 +161,7 @@ export default function ParticipantSidebar({
             onClick={() => setShowGroupSelect(!showGroupSelect)}
             className="w-full text-xs text-slate-400 hover:text-white transition-colors text-left"
           >
-            {showGroupSelect ? "— Cancel" : "+ Join group"}
+            {showGroupSelect ? '— Cancel' : '+ Join group'}
           </button>
           {showGroupSelect && (
             <div className="space-y-1">

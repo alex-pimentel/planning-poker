@@ -1,15 +1,15 @@
-import { useState, useMemo } from "react";
-import { useGameStore } from "../../store/gameStore";
-import { useRoomActions } from "../../hooks/useRoomActions";
-import { ROOM_STATUS } from "../../lib/constants";
-import { cardValueToNumber } from "../../lib/utils";
+import { useState, useMemo } from 'react';
+import { useGameStore } from '../../store/gameStore';
+import { useRoomActions } from '../../hooks/useRoomActions';
+import { ROOM_STATUS } from '../../lib/constants';
+import { cardValueToNumber } from '../../lib/utils';
 
 export default function MediatorControls({ tasks, onSetFinalScore }) {
   const { isMediator, roomInfo, votes } = useGameStore();
   const { revealVotes, advanceRound, resetRound } = useRoomActions();
-  const [taskInput, setTaskInput] = useState("");
+  const [taskInput, setTaskInput] = useState('');
   const [showTaskInput, setShowTaskInput] = useState(false);
-  const [finalScore, setFinalScore] = useState("");
+  const [finalScore, setFinalScore] = useState('');
 
   const isVoting = roomInfo.status === ROOM_STATUS.VOTING;
   const isRevealed = roomInfo.status === ROOM_STATUS.REVEALED;
@@ -17,18 +17,15 @@ export default function MediatorControls({ tasks, onSetFinalScore }) {
   const hasTasks = tasks.length > 0;
 
   const currentTaskObj = tasks.find((t) => t.name === roomInfo.current_task);
-  const currentTaskIndex = tasks.findIndex(
-    (t) => t.name === roomInfo.current_task,
-  );
-  const hasNextTask =
-    currentTaskIndex >= 0 && currentTaskIndex < tasks.length - 1;
+  const currentTaskIndex = tasks.findIndex((t) => t.name === roomInfo.current_task);
+  const hasNextTask = currentTaskIndex >= 0 && currentTaskIndex < tasks.length - 1;
 
   const averageScore = useMemo(() => {
-    if (!isRevealed || !votes.length) return "";
+    if (!isRevealed || !votes.length) return '';
     const numericValues = votes
       .map((v) => cardValueToNumber(v.vote_value))
       .filter((v) => v !== null);
-    if (numericValues.length === 0) return "";
+    if (numericValues.length === 0) return '';
     const sum = numericValues.reduce((a, b) => a + b, 0);
     return (sum / numericValues.length).toFixed(1);
   }, [isRevealed, votes]);
@@ -46,13 +43,13 @@ export default function MediatorControls({ tasks, onSetFinalScore }) {
     } else {
       await advanceRound();
     }
-    setFinalScore("");
+    setFinalScore('');
   };
 
   const handleNewRound = () => {
     if (showTaskInput) {
       resetRound(taskInput.trim() || undefined);
-      setTaskInput("");
+      setTaskInput('');
       setShowTaskInput(false);
     } else {
       setShowTaskInput(true);
@@ -65,10 +62,7 @@ export default function MediatorControls({ tasks, onSetFinalScore }) {
 
       <div className="flex gap-1.5">
         {isVoting && hasVotes && (
-          <button
-            onClick={revealVotes}
-            className="glass-button flex-1 text-xs px-3 py-1.5"
-          >
+          <button onClick={revealVotes} className="glass-button flex-1 text-xs px-3 py-1.5">
             Reveal
           </button>
         )}
@@ -81,7 +75,7 @@ export default function MediatorControls({ tasks, onSetFinalScore }) {
                 type="text"
                 value={finalScore}
                 onChange={(e) => setFinalScore(e.target.value)}
-                placeholder={averageScore ? `avg ${averageScore}` : "Score"}
+                placeholder={averageScore ? `avg ${averageScore}` : 'Score'}
                 className="w-16 px-1.5 py-0.5 rounded-lg bg-white/5 border border-white/10
                            text-white placeholder-slate-500 text-xs text-center
                            focus:outline-none focus:ring-1 focus:ring-poker-500"
@@ -91,18 +85,15 @@ export default function MediatorControls({ tasks, onSetFinalScore }) {
               onClick={handleConfirmScore}
               disabled={!finalScore.trim()}
               className="glass-button w-full text-xs px-3 py-1.5"
-              title={!finalScore.trim() ? "Enter a final score first" : ""}
+              title={!finalScore.trim() ? 'Enter a final score first' : ''}
             >
-              {hasNextTask ? "Confirm & Next" : "Confirm & New"}
+              {hasNextTask ? 'Confirm & Next' : 'Confirm & New'}
             </button>
           </div>
         )}
 
         {isRevealed && !hasTasks && (
-          <button
-            onClick={handleNewRound}
-            className="glass-button flex-1 text-xs px-3 py-1.5"
-          >
+          <button onClick={handleNewRound} className="glass-button flex-1 text-xs px-3 py-1.5">
             New Round
           </button>
         )}
@@ -123,7 +114,7 @@ export default function MediatorControls({ tasks, onSetFinalScore }) {
           <button
             onClick={() => {
               resetRound(taskInput.trim() || undefined);
-              setTaskInput("");
+              setTaskInput('');
               setShowTaskInput(false);
             }}
             className="glass-button text-xs px-3 py-1.5"

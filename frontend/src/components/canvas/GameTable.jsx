@@ -1,9 +1,9 @@
-import { useState, useMemo, useRef, useEffect } from "react";
-import { useGameStore } from "../../store/gameStore";
-import { ROOM_STATUS } from "../../lib/constants";
-import { cardValueToNumber } from "../../lib/utils";
-import Card2D from "../ui/Card2D";
-import ConsensusConfetti from "./ConsensusConfetti";
+import { useState, useMemo, useRef, useEffect } from 'react';
+import { useGameStore } from '../../store/gameStore';
+import { ROOM_STATUS } from '../../lib/constants';
+import { cardValueToNumber } from '../../lib/utils';
+import Card2D from '../ui/Card2D';
+import ConsensusConfetti from './ConsensusConfetti';
 
 function ParticipantSlot({
   name,
@@ -19,14 +19,10 @@ function ParticipantSlot({
 }) {
   return (
     <div className="participant-slot" style={style}>
-      <span
-        className={`participant-name-badge ${isMediator ? "mediator-badge" : ""}`}
-      >
+      <span className={`participant-name-badge ${isMediator ? 'mediator-badge' : ''}`}>
         {isMediator && <span className="mediator-star">★ </span>}
         {name}
-        {isLocal && (
-          <span className="text-white/60 ml-1 text-[10px]">(você)</span>
-        )}
+        {isLocal && <span className="text-white/60 ml-1 text-[10px]">(você)</span>}
         {isMin && isRevealed && <span className="ml-1 text-[11px]">🐇</span>}
         {isMax && isRevealed && <span className="ml-1 text-[11px]">🐢</span>}
       </span>
@@ -34,7 +30,7 @@ function ParticipantSlot({
         <div className="mediator-card" />
       ) : (
         <Card2D
-          value={voteValue || "?"}
+          value={voteValue || '?'}
           faceDown={!cardRevealed}
           isRevealed={cardRevealed}
           size="sm"
@@ -45,32 +41,16 @@ function ParticipantSlot({
   );
 }
 
-export default function GameTable({
-  onCardClick,
-  tasks,
-  groups,
-  participantGroupMap,
-}) {
-  const {
-    votes,
-    localVote,
-    roomInfo,
-    participants,
-    userId,
-    isMediator,
-    mediatorVoting,
-    getDeck,
-  } = useGameStore();
+export default function GameTable({ onCardClick, tasks, groups, participantGroupMap }) {
+  const { votes, localVote, roomInfo, participants, userId, isMediator, mediatorVoting, getDeck } =
+    useGameStore();
   const deck = getDeck();
   const isRevealed = roomInfo.status === ROOM_STATUS.REVEALED;
   const prevStatus = useRef(roomInfo.status);
   const [showConfetti, setShowConfetti] = useState(false);
 
   useEffect(() => {
-    if (
-      prevStatus.current === ROOM_STATUS.REVEALED &&
-      roomInfo.status !== ROOM_STATUS.REVEALED
-    ) {
+    if (prevStatus.current === ROOM_STATUS.REVEALED && roomInfo.status !== ROOM_STATUS.REVEALED) {
       setShowConfetti(false);
     }
     prevStatus.current = roomInfo.status;
@@ -102,13 +82,11 @@ export default function GameTable({
   }, [votes]);
 
   const scoreBounds = useMemo(() => {
-    if (!isRevealed)
-      return { minVal: null, maxVal: null, minCount: 0, maxCount: 0 };
+    if (!isRevealed) return { minVal: null, maxVal: null, minCount: 0, maxCount: 0 };
     const nums = Object.values(voteMap)
       .map((v) => cardValueToNumber(v))
       .filter((v) => v !== null);
-    if (nums.length < 2)
-      return { minVal: null, maxVal: null, minCount: 0, maxCount: 0 };
+    if (nums.length < 2) return { minVal: null, maxVal: null, minCount: 0, maxCount: 0 };
     const minVal = Math.min(...nums);
     const maxVal = Math.max(...nums);
     const minCount = nums.filter((v) => v === minVal).length;
@@ -116,8 +94,7 @@ export default function GameTable({
     return { minVal, maxVal, minCount, maxCount };
   }, [voteMap, isRevealed]);
 
-  const isInTaskGroup =
-    !taskGroupId || participantGroupMap[userId] === taskGroupId;
+  const isInTaskGroup = !taskGroupId || participantGroupMap[userId] === taskGroupId;
 
   return (
     <div className="game-table">
@@ -125,9 +102,7 @@ export default function GameTable({
         <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/40 rounded-2xl">
           <div className="text-center">
             <p className="text-lg font-medium text-white">
-              Waiting for{" "}
-              {groups.find((g) => g.id === taskGroupId)?.name || "assigned"}{" "}
-              team
+              Waiting for {groups.find((g) => g.id === taskGroupId)?.name || 'assigned'} team
             </p>
             <p className="text-sm text-slate-400 mt-1">
               This task is reserved for a specific group.
@@ -143,13 +118,9 @@ export default function GameTable({
         const voteVal = voteMap[p.user_id] || null;
         const num = cardValueToNumber(voteVal);
         const isMin =
-          scoreBounds.minVal !== null &&
-          num === scoreBounds.minVal &&
-          scoreBounds.minCount === 1;
+          scoreBounds.minVal !== null && num === scoreBounds.minVal && scoreBounds.minCount === 1;
         const isMax =
-          scoreBounds.maxVal !== null &&
-          num === scoreBounds.maxVal &&
-          scoreBounds.maxCount === 1;
+          scoreBounds.maxVal !== null && num === scoreBounds.maxVal && scoreBounds.maxCount === 1;
         const cardRevealed = isRevealed && voteVal != null;
         return (
           <ParticipantSlot
@@ -189,9 +160,7 @@ export default function GameTable({
         !showConfetti &&
         scoreBounds.minVal !== null &&
         scoreBounds.minVal === scoreBounds.maxVal &&
-        scoreBounds.minCount >= 2 && (
-          <ConsensusConfetti onDone={() => setShowConfetti(true)} />
-        )}
+        scoreBounds.minCount >= 2 && <ConsensusConfetti onDone={() => setShowConfetti(true)} />}
     </div>
   );
 }

@@ -1,7 +1,7 @@
 export default function ConfirmModal({
   title,
   message,
-  confirmLabel = "Confirm",
+  confirmLabel = 'Confirm',
   onConfirm,
   onCancel,
   danger,
@@ -15,12 +15,7 @@ export default function ConfirmModal({
             onClick={onCancel}
             className="p-1 rounded hover:bg-white/10 text-slate-500 hover:text-white transition-colors"
           >
-            <svg
-              className="w-4 h-4"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -36,8 +31,8 @@ export default function ConfirmModal({
             onClick={onConfirm}
             className={`flex-1 text-sm px-4 py-2 rounded-lg border transition-colors ${
               danger
-                ? "bg-red-500/20 hover:bg-red-500/30 text-red-300 border-red-500/30"
-                : "bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border-amber-500/30"
+                ? 'bg-red-500/20 hover:bg-red-500/30 text-red-300 border-red-500/30'
+                : 'bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border-amber-500/30'
             }`}
           >
             {confirmLabel}

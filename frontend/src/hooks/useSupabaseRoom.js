@@ -1,7 +1,7 @@
-import { useEffect, useCallback } from "react";
-import { supabase } from "../lib/supabase";
-import { useGameStore } from "../store/gameStore";
-import { ROOM_STATUS } from "../lib/constants";
+import { useEffect, useCallback } from 'react';
+import { supabase } from '../lib/supabase';
+import { useGameStore } from '../store/gameStore';
+import { ROOM_STATUS } from '../lib/constants';
 
 export function useSupabaseRoom(roomId, userId, userName) {
   const setRoomInfo = useGameStore((s) => s.setRoomInfo);
@@ -14,10 +14,7 @@ export function useSupabaseRoom(roomId, userId, userName) {
 
   const fetchLatestVotes = useCallback(
     async (rId) => {
-      const { data, error } = await supabase
-        .from("votes")
-        .select("*")
-        .eq("room_id", rId);
+      const { data, error } = await supabase.from('votes').select('*').eq('room_id', rId);
       if (!error && data) {
         setVotes(data);
       }
@@ -35,11 +32,11 @@ export function useSupabaseRoom(roomId, userId, userName) {
     const dbRoomSub = supabase
       .channel(`room-db:${roomId}`)
       .on(
-        "postgres_changes",
+        'postgres_changes',
         {
-          event: "UPDATE",
-          schema: "public",
-          table: "rooms",
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'rooms',
           filter: `id=eq.${roomId}`,
         },
         (payload) => {
@@ -60,11 +57,11 @@ export function useSupabaseRoom(roomId, userId, userName) {
     const dbVoteSub = supabase
       .channel(`votes-db:${roomId}`)
       .on(
-        "postgres_changes",
+        'postgres_changes',
         {
-          event: "*",
-          schema: "public",
-          table: "votes",
+          event: '*',
+          schema: 'public',
+          table: 'votes',
           filter: `room_id=eq.${roomId}`,
         },
         () => {
@@ -74,7 +71,7 @@ export function useSupabaseRoom(roomId, userId, userName) {
       .subscribe();
 
     roomChannel
-      .on("presence", { event: "sync" }, () => {
+      .on('presence', { event: 'sync' }, () => {
         const state = roomChannel.presenceState();
         const participants = {};
         for (const presences of Object.values(state)) {
@@ -86,7 +83,7 @@ export function useSupabaseRoom(roomId, userId, userName) {
         setParticipants(participants);
       })
       .subscribe(async (status) => {
-        if (status === "SUBSCRIBED") {
+        if (status === 'SUBSCRIBED') {
           await roomChannel.track({
             user_name: userName,
             user_id: userId,
@@ -124,24 +121,24 @@ export function useSupabaseRoom(roomId, userId, userName) {
       if (value === currentVote) {
         setLocalVote(null);
         const { error } = await supabase
-          .from("votes")
+          .from('votes')
           .delete()
-          .eq("room_id", roomId)
-          .eq("user_id", userId);
+          .eq('room_id', roomId)
+          .eq('user_id', userId);
         if (error) setError(error.message);
         else fetchLatestVotes(roomId);
         return;
       }
 
       setLocalVote(value);
-      const { error } = await supabase.from("votes").upsert(
+      const { error } = await supabase.from('votes').upsert(
         {
           room_id: roomId,
           user_id: userId,
           user_name: userName,
           vote_value: value,
         },
-        { onConflict: "room_id, user_id" },
+        { onConflict: 'room_id, user_id' },
       );
       if (error) {
         setError(error.message);
@@ -153,11 +150,7 @@ export function useSupabaseRoom(roomId, userId, userName) {
 
   const leaveRoom = useCallback(async () => {
     if (!roomId || !userId) return;
-    await supabase
-      .from("votes")
-      .delete()
-      .eq("room_id", roomId)
-      .eq("user_id", userId);
+    await supabase.from('votes').delete().eq('room_id', roomId).eq('user_id', userId);
   }, [roomId, userId]);
 
   return { castVote, fetchLatestVotes, leaveRoom };
