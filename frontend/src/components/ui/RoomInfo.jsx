@@ -56,6 +56,7 @@ export default function RoomInfo({ onLeave, tasks, groups }) {
   return (
     <div className="glass-panel p-4 flex items-center justify-between">
       <div className="flex items-center gap-4">
+        <img src="/icon_agenteresolve.png" alt="" className="h-8 w-8 rounded-lg opacity-60" />
         <div className="flex items-center gap-2">
           <div>
             <h2 className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Room</h2>
