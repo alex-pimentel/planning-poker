@@ -19,11 +19,7 @@ function HomeScreen({ onNavigate }) {
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
       <div className="glass-panel p-8 w-full max-w-md text-center space-y-6">
-        <img
-          src="/logo_agenteresolve.png"
-          alt="Planning Poker"
-          className="h-16 mx-auto"
-        />
+        <img src="/logo_agenteresolve.png" alt="Planning Poker" className="h-16 mx-auto" />
         <h1 className="text-4xl font-bold text-glow">Planning Poker</h1>
         <p className="text-slate-400">Real-time sprint planning with your team</p>
         <div className="space-y-3">
