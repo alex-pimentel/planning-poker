@@ -33,11 +33,7 @@ export function exportPdf({ roomCode, userName, tasks, groups }) {
 
   const rows = scored.map((t, i) => {
     const group = groups.find((g) => g.id === t.group_id);
-    return [
-      String(i + 1),
-      group ? `${t.name} (${group.name})` : t.name,
-      t.final_score || '—',
-    ];
+    return [String(i + 1), group ? `${t.name} (${group.name})` : t.name, t.final_score || '—'];
   });
 
   doc.autoTable({
