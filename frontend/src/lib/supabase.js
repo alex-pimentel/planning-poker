@@ -1,12 +1,12 @@
-import { createClient } from '@supabase/supabase-js';
+import { createClient } from "@supabase/supabase-js";
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 if (!supabaseUrl || !supabaseAnonKey) {
   throw new Error(
-    'Missing Supabase environment variables. ' +
-      'Copy frontend/.env.example to frontend/.env.local and fill in your Supabase project credentials.',
+    "Missing Supabase environment variables. " +
+      "Copy frontend/.env.example to frontend/.env.local and fill in your Supabase project credentials.",
   );
 }
 
@@ -30,7 +30,7 @@ export async function ensureAnonAuth() {
     error,
   } = await supabase.auth.signInAnonymously();
   if (error) {
-    console.error('Anonymous auth failed:', error.message);
+    console.error("Anonymous auth failed:", error.message);
     return null;
   }
   anonUser = session.user;

@@ -32,6 +32,56 @@ This repo is a **Serverless Planning Poker** app.
 - **Edge Function** at `supabase/functions/manage-room/` for admin ops
 - **Makefile** is the single entry for dev/lint/test/build
 
+## Progress & Decisions (session memory)
+
+### Status
+- Task groups, voting flow, mediator controls, and UI polish complete
+- Active branch: `feature/task-list-and-groups`
+
+### Latest changes
+- **Voting status**: removed colored dot (`sidebar-dot`), now uses only ✓/— checkbox before participant name
+- **Task reordering**: fixed 403/400 errors by including all NOT NULL columns in upsert
+- **Radix Select**: replaced native `<select>` across all panels; added `compact` variant
+- **Initial task creation**: `createRoom` now inserts the first task
+- **Task sync**: switched to broadcast-based `tasks_changed` on room channel (more reliable than `postgres_changes`)
+- **Mediator transfer**: modal with participant pick list + double confirm; DB updates `rooms.mediator_id`; sidebar shows transfer button + amber highlight for mediator
+- **Mediator voting**: toggle in store (`mediatorVoting`) persisted locally; sidebar toggle button for mediator; GameTable shows deck conditionally
+- **Hidden cards for mediator**: replaced with `mediator.svg` placeholder image
+- **Vote count**: `voted/total` in VoteResults, group-aware
+- **Min/max highlights**: 🐇 (lowest unique) and 🐢 (highest unique) emoji indicators in VoteResults and GameTable slots
+- **Consensus confetti**: CSS-animated particle burst when all voters agree
+- **Group task overlay**: now hidden when `isRevealed`
+- **Bottom panel resizable**: drag handle, height saved to `localStorage`
+- **Task sorting**: completed (with `final_score`) first, pending second
+- **"Vote" button**: on each pending task to select it for voting
+- **"Confirm & Next"**: disabled when score input is empty
+- **`clearTable` on VOTING**: now only clears `localVote` (not `votes`) to avoid race with `dbVoteSub`
+- **ESLint fix**: added `setLocalVote` to dependency array in `useSupabaseRoom.js`
+
+### Key decisions
+- Broadcast over `postgres_changes` for task updates (more reliable locally)
+- Renamed accent palette from blue to amber across panels
+- `.glass-panel` opacity: `bg-black/60`
+- Min/max highlights only when exactly one participant holds that value
+- Portuguese UI labels
+- `bottomHeight` key in localStorage: `planning-poker-bottom-height`
+
+### Relevant files
+- `frontend/src/hooks/useRoomActions.js` — `transferMediator()`, `advanceRound()`, `kickParticipant()`
+- `frontend/src/hooks/useSupabaseRoom.js` — Presence + DB subscriptions; `clearTable` on RESET
+- `frontend/src/store/gameStore.js` — `mediatorVoting`, `toggleMediatorVoting`, `clearTable`
+- `frontend/src/components/ui/ParticipantSidebar.jsx` — participant rows, mediator transfer button
+- `frontend/src/components/ui/TransferMediatorModal.jsx` — mediator transfer modal
+- `frontend/src/components/ui/ConfirmModal.jsx` — reusable confirm modal (danger variant)
+- `frontend/src/components/ui/TaskListPanel.jsx` — Vote button, auto-sort, delete via ConfirmModal
+- `frontend/src/components/ui/MediatorControls.jsx` — Confirm & Next disabled without score
+- `frontend/src/components/ui/VoteResults.jsx` — 🐇/🐢 highlights, voted/total, group-aware
+- `frontend/src/components/canvas/GameTable.jsx` — mediator voting, confetti, 🐇/🐢 on slots
+- `frontend/src/components/canvas/ConsensusConfetti.jsx` — CSS-animated confetti particles
+- `frontend/src/App.jsx` — bottom panel resizable drag handle
+- `frontend/src/index.css` — `.glass-panel`, `.panel-title`, `.resize-handle`, confetti keyframes
+- `frontend/public/images/cards/mediator.svg` — mediator card placeholder
+
 ## Gotchas
 
 - `supabase db reset` reapplies all migrations — use when changing schema

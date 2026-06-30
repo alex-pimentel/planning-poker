@@ -1,10 +1,10 @@
-import { useState } from 'react';
-import { useGameStore } from '../../store/gameStore';
-import { useRoomActions } from '../../hooks/useRoomActions';
+import { useState } from "react";
+import { useGameStore } from "../../store/gameStore";
+import { useRoomActions } from "../../hooks/useRoomActions";
 
-export default function JoinRoom({ onJoined, initialCode = '' }) {
+export default function JoinRoom({ onJoined, initialCode = "" }) {
   const [roomCode, setRoomCode] = useState(initialCode);
-  const [userName, setUserName] = useState('');
+  const [userName, setUserName] = useState("");
   const [loading, setLoading] = useState(false);
   const { error, setUserName: storeSetUserName } = useGameStore();
   const { joinRoom } = useRoomActions();
@@ -29,7 +29,12 @@ export default function JoinRoom({ onJoined, initialCode = '' }) {
             onClick={() => window.history.back()}
             className="p-2 rounded-lg hover:bg-white/10 transition-colors"
           >
-            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg
+              className="w-5 h-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -43,7 +48,9 @@ export default function JoinRoom({ onJoined, initialCode = '' }) {
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">Room Code</label>
+            <label className="block text-sm font-medium text-slate-300 mb-2">
+              Room Code
+            </label>
             <input
               type="text"
               value={roomCode}
@@ -59,7 +66,9 @@ export default function JoinRoom({ onJoined, initialCode = '' }) {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">Your Name</label>
+            <label className="block text-sm font-medium text-slate-300 mb-2">
+              Your Name
+            </label>
             <input
               type="text"
               value={userName}
@@ -85,7 +94,7 @@ export default function JoinRoom({ onJoined, initialCode = '' }) {
             disabled={loading || !roomCode.trim() || !userName.trim()}
             className="glass-button w-full"
           >
-            {loading ? 'Joining...' : 'Join Room'}
+            {loading ? "Joining..." : "Join Room"}
           </button>
         </form>
       </div>

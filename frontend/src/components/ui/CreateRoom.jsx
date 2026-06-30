@@ -1,17 +1,17 @@
-import { useState } from 'react';
-import { useGameStore } from '../../store/gameStore';
-import { useRoomActions } from '../../hooks/useRoomActions';
-import Select from './Select';
+import { useState } from "react";
+import { useGameStore } from "../../store/gameStore";
+import { useRoomActions } from "../../hooks/useRoomActions";
+import Select from "./Select";
 
 const DECK_OPTIONS = [
-  { value: 'fibonacci', label: 'Fibonacci (0, 1, 2, 3, 5, 8, 13, 21, 34, ?)' },
-  { value: 'tshirt', label: 'T-Shirt (XS, S, M, L, XL, XXL, ?)' },
-  { value: 'powers2', label: 'Powers of 2 (0, 1, 2, 4, 8, 16, 32, 64, ?)' },
+  { value: "fibonacci", label: "Fibonacci (0, 1, 2, 3, 5, 8, 13, 21, 34, ?)" },
+  { value: "tshirt", label: "T-Shirt (XS, S, M, L, XL, XXL, ?)" },
+  { value: "powers2", label: "Powers of 2 (0, 1, 2, 4, 8, 16, 32, 64, ?)" },
 ];
 
 export default function CreateRoom({ onCreated }) {
-  const [userName, setUserName] = useState('');
-  const [deckType, setDeckType] = useState('fibonacci');
+  const [userName, setUserName] = useState("");
+  const [deckType, setDeckType] = useState("fibonacci");
   const [loading, setLoading] = useState(false);
   const { error, setUserName: storeSetUserName } = useGameStore();
   const { createRoom } = useRoomActions();
@@ -31,12 +31,18 @@ export default function CreateRoom({ onCreated }) {
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
       <div className="glass-panel p-8 w-full max-w-md">
-        <h1 className="text-3xl font-bold text-center mb-2 text-glow">Planning Poker</h1>
-        <p className="text-slate-400 text-center mb-8">Create a new planning session</p>
+        <h1 className="text-3xl font-bold text-center mb-2 text-glow">
+          Planning Poker
+        </h1>
+        <p className="text-slate-400 text-center mb-8">
+          Create a new planning session
+        </p>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-2">Your Name</label>
+            <label className="block text-sm font-medium text-slate-300 mb-2">
+              Your Name
+            </label>
             <input
               type="text"
               value={userName}
@@ -71,7 +77,7 @@ export default function CreateRoom({ onCreated }) {
             disabled={loading || !userName.trim()}
             className="glass-button w-full"
           >
-            {loading ? 'Creating Room...' : 'Create Room'}
+            {loading ? "Creating Room..." : "Create Room"}
           </button>
         </form>
       </div>

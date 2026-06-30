@@ -24,7 +24,7 @@ serve(async (req: Request) => {
   };
 
   if (req.method === 'OPTIONS') {
-    return new Response(null { headers });
+    return new Response(null, { headers });
   }
 
   try {
@@ -78,6 +78,20 @@ serve(async (req: Request) => {
 
         return new Response(
           JSON.stringify({ success: true, action: 'reveal_votes' }),
+          { status: 200, headers },
+        );
+      }
+
+      case 'reset_participant_groups': {
+        const { error: pgError } = await supabase
+          .from('participant_groups')
+          .delete()
+          .eq('room_id', room_id);
+
+        if (pgError) throw pgError;
+
+        return new Response(
+          JSON.stringify({ success: true, action: 'reset_participant_groups' }),
           { status: 200, headers },
         );
       }

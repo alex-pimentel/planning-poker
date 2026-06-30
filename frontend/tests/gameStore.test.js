@@ -14,6 +14,9 @@ describe('gameStore', () => {
     expect(state.votes).toEqual([]);
     expect(state.localVote).toBeNull();
     expect(state.participants).toEqual({});
+    expect(state.tasks).toEqual([]);
+    expect(state.groups).toEqual([]);
+    expect(state.participantGroupMap).toEqual({});
   });
 
   it('sets room info', () => {
@@ -96,6 +99,9 @@ describe('gameStore', () => {
     useGameStore.getState().setRoomInfo({ id: 'abc-123' });
     useGameStore.getState().setUserId('user-1');
     useGameStore.getState().setLocalVote('8');
+    useGameStore.getState().setTasks([{ id: 't1', name: 'Task 1' }]);
+    useGameStore.getState().setGroups([{ id: 'g1', name: 'Frontend' }]);
+    useGameStore.getState().setParticipantGroupMap({ 'user-1': 'g1' });
 
     useGameStore.getState().reset();
 
@@ -103,6 +109,9 @@ describe('gameStore', () => {
     expect(state.roomInfo.id).toBeNull();
     expect(state.userId).toBeNull();
     expect(state.localVote).toBeNull();
+    expect(state.tasks).toEqual([]);
+    expect(state.groups).toEqual([]);
+    expect(state.participantGroupMap).toEqual({});
   });
 
   it('sets participants', () => {
@@ -112,6 +121,33 @@ describe('gameStore', () => {
     };
     useGameStore.getState().setParticipants(participants);
     expect(Object.keys(useGameStore.getState().participants)).toHaveLength(2);
+  });
+
+  it('sets tasks', () => {
+    const tasks = [
+      { id: 't1', name: 'Task 1', sort_order: 0 },
+      { id: 't2', name: 'Task 2', sort_order: 1 },
+    ];
+    useGameStore.getState().setTasks(tasks);
+    expect(useGameStore.getState().tasks).toHaveLength(2);
+    expect(useGameStore.getState().tasks[0].name).toBe('Task 1');
+  });
+
+  it('sets groups', () => {
+    const groups = [
+      { id: 'g1', name: 'Frontend' },
+      { id: 'g2', name: 'Backend' },
+    ];
+    useGameStore.getState().setGroups(groups);
+    expect(useGameStore.getState().groups).toHaveLength(2);
+    expect(useGameStore.getState().groups[1].name).toBe('Backend');
+  });
+
+  it('sets participant group map', () => {
+    const map = { 'user-1': 'g1', 'user-2': 'g2' };
+    useGameStore.getState().setParticipantGroupMap(map);
+    expect(useGameStore.getState().participantGroupMap['user-1']).toBe('g1');
+    expect(useGameStore.getState().participantGroupMap['user-2']).toBe('g2');
   });
 
   it('sets and clears error', () => {

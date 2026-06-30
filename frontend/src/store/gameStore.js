@@ -1,33 +1,37 @@
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
-import { DECK_MAP, ROOM_STATUS } from '../lib/constants';
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
+import { DECK_MAP, ROOM_STATUS } from "../lib/constants";
 
 const initialState = {
   roomInfo: {
     id: null,
-    room_code: '',
+    room_code: "",
     status: ROOM_STATUS.VOTING,
-    current_task: 'Initial Task',
+    current_task: "Initial Task",
     mediator_id: null,
-    deck_type: 'fibonacci',
+    deck_type: "fibonacci",
   },
   userId: null,
-  userName: '',
+  userName: "",
   isMediator: false,
+  mediatorVoting: false,
   participants: {},
   localVote: null,
   votes: [],
-  taskHistory: [],
+  tasks: [],
+  groups: [],
+  participantGroupMap: {},
   error: null,
 };
 
 const persistConfig = {
-  name: 'planning-poker-session',
+  name: "planning-poker-session",
   partialize: (state) => ({
     roomInfo: state.roomInfo,
     userId: state.userId,
     userName: state.userName,
     isMediator: state.isMediator,
+    mediatorVoting: state.mediatorVoting,
   }),
 };
 
@@ -46,13 +50,23 @@ export const useGameStore = create(
 
       setIsMediator: (isMediator) => set({ isMediator }),
 
+      setMediatorVoting: (voting) => set({ mediatorVoting: voting }),
+
+      toggleMediatorVoting: () =>
+        set((state) => ({ mediatorVoting: !state.mediatorVoting })),
+
       setParticipants: (participants) => set({ participants }),
 
       setLocalVote: (vote) => set({ localVote: vote }),
 
       setVotes: (votes) => set({ votes }),
 
-      setTaskHistory: (taskHistory) => set({ taskHistory }),
+      setTasks: (tasks) => set({ tasks }),
+
+      setGroups: (groups) => set({ groups }),
+
+      setParticipantGroupMap: (participantGroupMap) =>
+        set({ participantGroupMap }),
 
       setError: (error) => set({ error }),
 
