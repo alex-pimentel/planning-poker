@@ -86,17 +86,17 @@
   }
 
   .mediator-badge {
-    color: #fbbf24;
+    color: #00abec;
   }
 
   .mediator-tag {
     @apply text-[10px] font-semibold px-1.5 py-0.5 rounded;
-    background: rgba(251, 191, 36, 0.15);
-    color: #fbbf24;
+    background: rgba(0, 171, 236, 0.15);
+    color: #00abec;
   }
 
   .mediator-star {
-    @apply text-amber-400;
+    @apply text-poker-400;
   }
 
   .mediator-card {
@@ -107,8 +107,8 @@
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    border: 1px solid rgba(251, 191, 36, 0.3);
-    box-shadow: 0 0 8px rgba(251, 191, 36, 0.15);
+    border: 1px solid rgba(0, 171, 236, 0.3);
+    box-shadow: 0 0 8px rgba(0, 171, 236, 0.15);
   }
 
   /* ─── Deck Area ────────────────────────────────────────────────── */
@@ -200,10 +200,10 @@
   }
 
   .card-2d-selected {
-    border-color: #eab308;
+    border-color: #00abec;
     box-shadow:
-      0 0 12px rgba(234, 179, 8, 0.5),
-      inset 0 0 12px rgba(234, 179, 8, 0.15);
+      0 0 12px rgba(0, 171, 236, 0.5),
+      inset 0 0 12px rgba(0, 171, 236, 0.15);
   }
 
   .card-2d-value-top {
@@ -257,12 +257,12 @@
   }
 
   .sidebar-item-mediator {
-    background: rgba(251, 191, 36, 0.08);
-    border-left: 2px solid rgba(251, 191, 36, 0.5);
+    background: rgba(0, 171, 236, 0.08);
+    border-left: 2px solid rgba(0, 171, 236, 0.5);
   }
 
   .sidebar-item-mediator:hover {
-    background: rgba(251, 191, 36, 0.12);
+    background: rgba(0, 171, 236, 0.12);
   }
 
   .sidebar-item-left {
@@ -337,7 +337,7 @@
 
 @layer utilities {
   .text-glow {
-    text-shadow: 0 0 20px rgba(234, 179, 8, 0.5);
+    text-shadow: 0 0 20px rgba(0, 171, 236, 0.5);
   }
 
   .scrollbar-custom::-webkit-scrollbar {

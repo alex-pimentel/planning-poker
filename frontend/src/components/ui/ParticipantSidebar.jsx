@@ -67,7 +67,7 @@ export default function ParticipantSidebar({
           {isMed && onOpenTransferModal && (
             <button
               onClick={onOpenTransferModal}
-              className="ml-1 p-0.5 rounded hover:bg-amber-500/20 text-slate-500 hover:text-amber-400 transition-colors"
+              className="ml-1 p-0.5 rounded hover:bg-poker-500/20 text-slate-500 hover:text-poker-400 transition-colors"
               title="Transfer mediator to another participant"
             >
               <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">

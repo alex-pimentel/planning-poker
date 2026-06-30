@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 56 80" fill="none">
-  <rect width="56" height="80" rx="6" fill="#1e293b" stroke="#fbbf24" stroke-width="1.5"/>
-  <text x="28" y="36" text-anchor="middle" font-size="20" fill="#fbbf24">★</text>
+  <rect width="56" height="80" rx="6" fill="#1e293b" stroke="#00abec" stroke-width="1.5"/>
+  <text x="28" y="36" text-anchor="middle" font-size="20" fill="#00abec">★</text>
   <text x="28" y="56" text-anchor="middle" font-size="8" fill="#94a3b8" font-family="sans-serif">MEDIATOR</text>
 </svg>

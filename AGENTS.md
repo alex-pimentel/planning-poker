@@ -10,8 +10,11 @@ This repo is a **Serverless Planning Poker** app.
 | Unit tests | `make test-unit` |
 | E2E tests | `make test-e2e` (requires dev server) |
 | Lint | `make lint` |
+| Format | `cd frontend && npm run format` (check) or `npx prettier --write src/` (fix) |
 | Everything | `make test` (unit only) |
 | Build | `make build` |
+
+> **Important**: Always run `npm run lint` and `npx prettier --write src/` before every commit.
 
 ## Project layout
 

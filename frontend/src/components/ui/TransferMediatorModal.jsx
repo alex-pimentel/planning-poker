@@ -55,7 +55,7 @@ export default function TransferMediatorModal({ participants, mediatorId, onTran
           <div className="space-y-3">
             <p className="text-sm text-slate-300">
               Transfer mediator to{' '}
-              <span className="text-amber-400 font-semibold">{target.user_name}</span>?
+              <span className="text-poker-400 font-semibold">{target.user_name}</span>?
             </p>
             <div className="flex gap-2">
               <button
@@ -63,7 +63,7 @@ export default function TransferMediatorModal({ participants, mediatorId, onTran
                   onTransfer(target.user_id);
                   onClose();
                 }}
-                className="flex-1 text-sm px-4 py-2 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/30 transition-colors"
+                className="flex-1 text-sm px-4 py-2 rounded-lg bg-poker-500/20 hover:bg-poker-500/30 text-poker-300 border border-poker-500/30 transition-colors"
               >
                 Confirm
               </button>

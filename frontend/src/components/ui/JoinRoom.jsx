@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useGameStore } from '../../store/gameStore';
 import { useRoomActions } from '../../hooks/useRoomActions';
 
-export default function JoinRoom({ onJoined, initialCode = '' }) {
+export default function JoinRoom({ onJoined, onBack, initialCode = '' }) {
   const [roomCode, setRoomCode] = useState(initialCode);
   const [userName, setUserName] = useState('');
   const [loading, setLoading] = useState(false);
@@ -24,9 +24,19 @@ export default function JoinRoom({ onJoined, initialCode = '' }) {
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
       <div className="glass-panel p-8 w-full max-w-md">
-        <div className="flex items-center gap-3 mb-8">
+        <div className="w-full mb-5">
+          <a
+            href="http://www.agenteresolve.com.br"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block p-2"
+          >
+            <img src="/logo_agenteresolve.png" alt="Planning Poker" className="h-12 mx-auto" />
+          </a>
+        </div>
+        <div className="flex items-center gap-3 mb-2">
           <button
-            onClick={() => window.history.back()}
+            onClick={() => onBack?.()}
             className="p-2 rounded-lg hover:bg-white/10 transition-colors"
           >
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">

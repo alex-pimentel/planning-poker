@@ -70,7 +70,7 @@ export default function VoteResults({ groups, participantGroupMap }) {
     if (!isRevealed) return 'bg-white/5 border border-white/10';
     if (vote.vote_value == null) return 'bg-red-500/10 border border-red-500/20';
     const num = cardValueToNumber(vote.vote_value);
-    if (highlightMin && num === stats.minVal) return 'bg-amber-500/20 border border-amber-500/30';
+    if (highlightMin && num === stats.minVal) return 'bg-poker-500/20 border border-poker-500/30';
     if (highlightMax && num === stats.maxVal) return 'bg-red-500/15 border border-red-500/25';
     return 'bg-white/5 border border-white/10';
   };
@@ -105,7 +105,7 @@ export default function VoteResults({ groups, participantGroupMap }) {
           {stats.minVal !== null && (
             <div className="px-2 py-1 rounded-lg bg-white/5 flex items-center gap-1">
               <span className="text-slate-500">Min: </span>
-              <span className="text-amber-400 font-bold">{stats.minVal}</span>
+              <span className="text-poker-400 font-bold">{stats.minVal}</span>
             </div>
           )}
           {stats.maxVal !== null && (
@@ -137,7 +137,7 @@ export default function VoteResults({ groups, participantGroupMap }) {
                 {isMed ? ' ★' : ''}
               </div>
               <div className="text-[10px] mt-0.5">
-                {isMin && <span className="text-amber-400">🐇</span>}
+                {isMin && <span className="text-poker-400">🐇</span>}
                 {isMax && <span className="text-red-400">🐢</span>}
               </div>
             </div>

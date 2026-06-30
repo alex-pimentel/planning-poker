@@ -211,13 +211,21 @@ export default function App() {
     setScreen('room');
   }, []);
 
+  const handleBackToHome = useCallback(() => {
+    setScreen('home');
+  }, []);
+
   const handleLeaveRoom = useCallback(() => {
     useGameStore.getState().reset();
     setScreen('home');
   }, []);
 
-  if (screen === 'create') return <CreateRoom onCreated={handleRoomCreated} />;
-  if (screen === 'join') return <JoinRoom onJoined={handleRoomJoined} initialCode={joinCode} />;
+  if (screen === 'create')
+    return <CreateRoom onCreated={handleRoomCreated} onBack={handleBackToHome} />;
+  if (screen === 'join')
+    return (
+      <JoinRoom onJoined={handleRoomJoined} onBack={handleBackToHome} initialCode={joinCode} />
+    );
   if (screen === 'room') return <RoomScreen onLeave={handleLeaveRoom} />;
   return <HomeScreen onNavigate={setScreen} />;
 }

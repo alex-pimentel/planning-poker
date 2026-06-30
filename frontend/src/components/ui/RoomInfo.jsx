@@ -124,7 +124,7 @@ export default function RoomInfo({ onLeave, tasks, groups }) {
       <div className="flex items-center gap-3">
         <div className="flex items-center gap-2">
           <span
-            className={`w-2 h-2 rounded-full ${isMediator ? 'bg-amber-400' : 'bg-emerald-400'}`}
+            className={`w-2 h-2 rounded-full ${isMediator ? 'bg-poker-400' : 'bg-emerald-400'}`}
           />
           <span className="text-sm text-slate-400">{isMediator ? 'Mediator' : 'Participant'}</span>
         </div>

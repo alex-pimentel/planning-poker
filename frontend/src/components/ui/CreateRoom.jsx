@@ -9,7 +9,7 @@ const DECK_OPTIONS = [
   { value: 'powers2', label: 'Powers of 2 (0, 1, 2, 4, 8, 16, 32, 64, ?)' },
 ];
 
-export default function CreateRoom({ onCreated }) {
+export default function CreateRoom({ onCreated, onBack }) {
   const [userName, setUserName] = useState('');
   const [deckType, setDeckType] = useState('fibonacci');
   const [loading, setLoading] = useState(false);
@@ -35,13 +35,27 @@ export default function CreateRoom({ onCreated }) {
           href="http://www.agenteresolve.com.br"
           target="_blank"
           rel="noopener noreferrer"
-          className="p-2"
+          className="block p-2 mb-5"
         >
           <img src="/logo_agenteresolve.png" alt="Planning Poker" className="h-12 mx-auto" />
         </a>
 
-        <h1 className="text-3xl font-bold text-center mb-2 text-glow">Planning Poker</h1>
-        <p className="text-slate-400 text-center mb-8">Create a new planning session</p>
+        <div className="flex items-center gap-3 mb-2">
+          <button
+            onClick={() => onBack?.()}
+            className="p-2 rounded-lg hover:bg-white/10 transition-colors"
+          >
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M15 19l-7-7 7-7"
+              />
+            </svg>
+          </button>
+          <h1 className="text-2xl font-bold">Create Room</h1>
+        </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
