@@ -2,6 +2,7 @@ import { useState, useMemo, useRef } from 'react';
 import { useGameStore } from '../../store/gameStore';
 import Select from './Select';
 import ConfirmModal from './ConfirmModal';
+import { exportPdf } from '../../utils/exportPdf';
 
 export default function TaskListPanel({
   tasks,
@@ -13,12 +14,13 @@ export default function TaskListPanel({
   onSelectTask,
   isMediator,
 }) {
-  const { roomInfo } = useGameStore();
+  const { roomInfo, userName } = useGameStore();
   const [newTaskName, setNewTaskName] = useState('');
   const [newTaskGroup, setNewTaskGroup] = useState('');
   const [editingId, setEditingId] = useState(null);
   const [editName, setEditName] = useState('');
   const [collapsed, setCollapsed] = useState(false);
+  const [exporting, setExporting] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState(null); // task object when confirming
   const dragItem = useRef(null);
   const dragOverItem = useRef(null);
@@ -79,6 +81,22 @@ export default function TaskListPanel({
           Tasks{' '}
           {tasks.length > 0 && <span className="text-slate-600 font-normal">({tasks.length})</span>}
         </h3>
+        {tasks.some((t) => t.final_score) && (
+          <button
+            onClick={async () => {
+              setExporting(true);
+              await new Promise((r) => setTimeout(r, 50));
+              exportPdf({ roomCode: roomInfo.room_code, userName, tasks, groups });
+              setExporting(false);
+            }}
+            disabled={exporting}
+            className="text-[10px] px-2 py-0.5 rounded bg-emerald-600/20 text-emerald-400
+                       hover:bg-emerald-600/30 disabled:opacity-50 disabled:cursor-wait
+                       transition-colors shrink-0"
+          >
+            {exporting ? 'Gerando...' : 'Exportar PDF'}
+          </button>
+        )}
         <button
           onClick={() => setCollapsed(!collapsed)}
           className="text-[10px] text-slate-500 hover:text-white transition-colors"
