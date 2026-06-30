@@ -1,23 +1,22 @@
-import { useCallback } from "react";
-import { supabase, ensureAnonAuth } from "../lib/supabase";
-import { useGameStore } from "../store/gameStore";
-import { generateRoomCode } from "../lib/utils";
-import { ROOM_STATUS } from "../lib/constants";
+import { useCallback } from 'react';
+import { supabase, ensureAnonAuth } from '../lib/supabase';
+import { useGameStore } from '../store/gameStore';
+import { generateRoomCode } from '../lib/utils';
+import { ROOM_STATUS } from '../lib/constants';
 
 export function useRoomActions() {
-  const { setRoomInfo, setUserId, setIsMediator, setError, clearTable } =
-    useGameStore();
+  const { setRoomInfo, setUserId, setIsMediator, setError, clearTable } = useGameStore();
 
   const createRoom = useCallback(
-    async (_userName, deckType = "fibonacci") => {
+    async (_userName, deckType = 'fibonacci') => {
       try {
         const user = await ensureAnonAuth();
-        if (!user) throw new Error("Failed to authenticate");
+        if (!user) throw new Error('Failed to authenticate');
 
         const roomCode = generateRoomCode();
 
         const { data, error } = await supabase
-          .from("rooms")
+          .from('rooms')
           .insert({
             room_code: roomCode,
             mediator_id: user.id,
@@ -28,7 +27,7 @@ export function useRoomActions() {
 
         if (error) throw error;
 
-        const { error: taskError } = await supabase.from("tasks").insert({
+        const { error: taskError } = await supabase.from('tasks').insert({
           room_id: data.id,
           name: data.current_task,
           sort_order: 0,
@@ -52,17 +51,17 @@ export function useRoomActions() {
     async (roomCode) => {
       try {
         const user = await ensureAnonAuth();
-        if (!user) throw new Error("Failed to authenticate");
+        if (!user) throw new Error('Failed to authenticate');
 
         const { data, error } = await supabase
-          .from("rooms")
-          .select("*")
-          .eq("room_code", roomCode.toUpperCase())
+          .from('rooms')
+          .select('*')
+          .eq('room_code', roomCode.toUpperCase())
           .single();
 
         if (error) {
-          if (error.code === "PGRST116") {
-            throw new Error("Room not found. Check the code and try again.");
+          if (error.code === 'PGRST116') {
+            throw new Error('Room not found. Check the code and try again.');
           }
           throw error;
         }
@@ -84,10 +83,10 @@ export function useRoomActions() {
     try {
       const roomId = useGameStore.getState().roomInfo.id;
       const { error } = await supabase
-        .from("rooms")
+        .from('rooms')
         .update({ status: ROOM_STATUS.REVEALED })
-        .eq("id", roomId)
-        .eq("mediator_id", useGameStore.getState().userId);
+        .eq('id', roomId)
+        .eq('mediator_id', useGameStore.getState().userId);
 
       if (error) throw error;
     } catch (err) {
@@ -100,16 +99,16 @@ export function useRoomActions() {
       try {
         const roomId = useGameStore.getState().roomInfo.id;
 
-        await supabase.from("votes").delete().eq("room_id", roomId);
+        await supabase.from('votes').delete().eq('room_id', roomId);
 
         const updates = { status: ROOM_STATUS.VOTING };
         if (newTaskName) updates.current_task = newTaskName;
 
         const { error } = await supabase
-          .from("rooms")
+          .from('rooms')
           .update(updates)
-          .eq("id", roomId)
-          .eq("mediator_id", useGameStore.getState().userId);
+          .eq('id', roomId)
+          .eq('mediator_id', useGameStore.getState().userId);
 
         if (error) throw error;
 
@@ -117,8 +116,8 @@ export function useRoomActions() {
 
         const channel = supabase.channel(`room:${roomId}`);
         await channel.send({
-          type: "broadcast",
-          event: "round_reset",
+          type: 'broadcast',
+          event: 'round_reset',
           payload: {},
         });
         supabase.removeChannel(channel);
@@ -134,16 +133,16 @@ export function useRoomActions() {
       try {
         const roomId = useGameStore.getState().roomInfo.id;
 
-        await supabase.from("votes").delete().eq("room_id", roomId);
+        await supabase.from('votes').delete().eq('room_id', roomId);
 
         const updates = { status: ROOM_STATUS.VOTING };
         if (nextTaskName) updates.current_task = nextTaskName;
 
         const { error } = await supabase
-          .from("rooms")
+          .from('rooms')
           .update(updates)
-          .eq("id", roomId)
-          .eq("mediator_id", useGameStore.getState().userId);
+          .eq('id', roomId)
+          .eq('mediator_id', useGameStore.getState().userId);
 
         if (error) throw error;
 
@@ -160,10 +159,10 @@ export function useRoomActions() {
     const roomId = store.roomInfo.id;
 
     const { error } = await supabase
-      .from("rooms")
+      .from('rooms')
       .update({ mediator_id: targetUserId })
-      .eq("id", roomId)
-      .eq("mediator_id", store.userId);
+      .eq('id', roomId)
+      .eq('mediator_id', store.userId);
 
     if (error) {
       store.setError(error.message);
@@ -175,20 +174,17 @@ export function useRoomActions() {
     const roomId = store.roomInfo.id;
 
     const { error } = await supabase
-      .from("votes")
+      .from('votes')
       .delete()
-      .eq("room_id", roomId)
-      .eq("user_id", targetUserId);
+      .eq('room_id', roomId)
+      .eq('user_id', targetUserId);
     if (error) {
       store.setError(error.message);
       return;
     }
 
     // Refresh votes immediately so VoteResults updates in real time
-    const { data } = await supabase
-      .from("votes")
-      .select("*")
-      .eq("room_id", roomId);
+    const { data } = await supabase.from('votes').select('*').eq('room_id', roomId);
     if (data) store.setVotes(data);
   }, []);
 

@@ -1,19 +1,8 @@
-export const FIBONACCI_DECK = [
-  "☕",
-  "1",
-  "2",
-  "3",
-  "5",
-  "8",
-  "13",
-  "21",
-  "34",
-  "?",
-];
+export const FIBONACCI_DECK = ['☕', '1', '2', '3', '5', '8', '13', '21', '34', '?'];
 
-export const TSHIRT_DECK = ["XS", "S", "M", "L", "XL", "XXL", "?"];
+export const TSHIRT_DECK = ['XS', 'S', 'M', 'L', 'XL', 'XXL', '?'];
 
-export const POWERS2_DECK = ["☕", "1", "2", "4", "8", "16", "32", "64", "?"];
+export const POWERS2_DECK = ['☕', '1', '2', '4', '8', '16', '32', '64', '?'];
 
 export const DECK_MAP = {
   fibonacci: FIBONACCI_DECK,
@@ -22,9 +11,9 @@ export const DECK_MAP = {
 };
 
 export const ROOM_STATUS = {
-  VOTING: "voting",
-  REVEALED: "revealed",
-  RESET: "reset",
+  VOTING: 'voting',
+  REVEALED: 'revealed',
+  RESET: 'reset',
 };
 
 export const CARD_ANIMATION = {

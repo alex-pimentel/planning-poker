@@ -7,7 +7,7 @@
   body,
   #root {
     @apply h-full w-full m-0 p-0 overflow-hidden;
-    font-family: "Inter", system-ui, sans-serif;
+    font-family: 'Inter', system-ui, sans-serif;
   }
 
   body {
@@ -36,16 +36,11 @@
   /* ─── Game Table (green felt) ──────────────────────────────────── */
   .game-table {
     @apply relative w-full h-full overflow-hidden;
-    background: radial-gradient(
-      ellipse at 50% 40%,
-      #1a5c2e 0%,
-      #0f3d1f 50%,
-      #0a2a14 100%
-    );
+    background: radial-gradient(ellipse at 50% 40%, #1a5c2e 0%, #0f3d1f 50%, #0a2a14 100%);
   }
 
   .game-table::before {
-    content: "";
+    content: '';
     position: absolute;
     inset: 0;
     background:
@@ -67,7 +62,7 @@
   }
 
   .game-table::after {
-    content: "";
+    content: '';
     position: absolute;
     inset: 12px;
     border: 2px solid rgba(255, 255, 255, 0.06);
@@ -108,7 +103,7 @@
     width: 44px;
     height: 64px;
     border-radius: 6px;
-    background-image: url("/images/cards/mediator.svg");
+    background-image: url('/images/cards/mediator.svg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -185,7 +180,7 @@
 
   /* Card Back */
   .card-2d-back {
-    background-image: url("/images/cards/back.jpg");
+    background-image: url('/images/cards/back.jpg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -193,7 +188,7 @@
 
   /* Card Front */
   .card-2d-front {
-    background-image: url("/images/cards/front.jpg");
+    background-image: url('/images/cards/front.jpg');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
@@ -313,7 +308,7 @@
   }
 
   .resize-handle::after {
-    content: "";
+    content: '';
     position: absolute;
     left: 50%;
     top: 50%;

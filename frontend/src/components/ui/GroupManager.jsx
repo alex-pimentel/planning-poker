@@ -1,5 +1,5 @@
-import { useState, useCallback } from "react";
-import Select from "./Select";
+import { useState, useCallback } from 'react';
+import Select from './Select';
 
 export default function GroupManager({
   groups,
@@ -13,15 +13,15 @@ export default function GroupManager({
   onClose,
   isMediator,
 }) {
-  const [newGroupName, setNewGroupName] = useState("");
+  const [newGroupName, setNewGroupName] = useState('');
   const [editingId, setEditingId] = useState(null);
-  const [editName, setEditName] = useState("");
+  const [editName, setEditName] = useState('');
   const [selectionKey, setSelectionKey] = useState(0);
 
   const handleAdd = () => {
     if (!newGroupName.trim()) return;
     onAddGroup(newGroupName.trim());
-    setNewGroupName("");
+    setNewGroupName('');
   };
 
   const handleStartRename = (group) => {
@@ -34,7 +34,7 @@ export default function GroupManager({
       onRenameGroup(groupId, editName.trim());
     }
     setEditingId(null);
-    setEditName("");
+    setEditName('');
   };
 
   const handleAssign = useCallback(
@@ -63,16 +63,8 @@ export default function GroupManager({
       <div className="glass-panel p-6 w-full max-w-2xl max-h-[80vh] overflow-y-auto space-y-4">
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-bold text-white">Manage Groups</h2>
-          <button
-            onClick={onClose}
-            className="text-slate-400 hover:text-white transition-colors"
-          >
-            <svg
-              className="w-5 h-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
+          <button onClick={onClose} className="text-slate-400 hover:text-white transition-colors">
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -89,7 +81,7 @@ export default function GroupManager({
               type="text"
               value={newGroupName}
               onChange={(e) => setNewGroupName(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && handleAdd()}
+              onKeyDown={(e) => e.key === 'Enter' && handleAdd()}
               placeholder="New group name..."
               className="flex-1 px-3 py-2 rounded-lg bg-white/5 border border-white/10
                          text-white placeholder-slate-500 text-sm
@@ -105,8 +97,8 @@ export default function GroupManager({
         {groups.length === 0 && (
           <p className="text-sm text-slate-400 italic">
             {isMediator
-              ? "Create your first group to organize participants."
-              : "No groups have been created yet."}
+              ? 'Create your first group to organize participants.'
+              : 'No groups have been created yet.'}
           </p>
         )}
 
@@ -127,17 +119,13 @@ export default function GroupManager({
                       value={editName}
                       onChange={(e) => setEditName(e.target.value)}
                       onBlur={() => handleSaveRename(group.id)}
-                      onKeyDown={(e) =>
-                        e.key === "Enter" && handleSaveRename(group.id)
-                      }
+                      onKeyDown={(e) => e.key === 'Enter' && handleSaveRename(group.id)}
                       className="flex-1 px-2 py-0.5 rounded bg-white/10 text-white text-sm font-medium
                                  focus:outline-none focus:ring-1 focus:ring-poker-500"
                       autoFocus
                     />
                   ) : (
-                    <h4 className="text-sm font-semibold text-white">
-                      {group.name}
-                    </h4>
+                    <h4 className="text-sm font-semibold text-white">{group.name}</h4>
                   )}
                   <div className="flex gap-1">
                     {isMediator && (
@@ -216,9 +204,7 @@ export default function GroupManager({
                     </span>
                   ))}
                   {members.length === 0 && (
-                    <span className="text-xs text-slate-600 italic">
-                      No members
-                    </span>
+                    <span className="text-xs text-slate-600 italic">No members</span>
                   )}
                 </div>
 
