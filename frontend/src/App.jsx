@@ -166,9 +166,11 @@ function RoomScreen({ onLeave }) {
           onSelectTask={isMediator ? handleSelectTask : undefined}
           isMediator={isMediator}
         />
-        <div className="flex flex-col gap-3 min-w-0">
-          <VoteResults groups={groups} participantGroupMap={participantGroupMap} />
+        <div className="flex flex-col gap-3 min-w-0 min-h-0">
           {isMediator && <MediatorControls tasks={tasks} onSetFinalScore={handleSetFinalScore} />}
+          <div className="flex-1 min-h-0 overflow-y-auto scrollbar-custom pr-1">
+            <VoteResults groups={groups} participantGroupMap={participantGroupMap} />
+          </div>
         </div>
       </div>
 

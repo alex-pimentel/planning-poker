@@ -57,7 +57,7 @@ export default function MediatorControls({ tasks, onSetFinalScore }) {
   };
 
   return (
-    <div className="glass-panel p-3 space-y-2">
+    <div className="glass-panel p-3 space-y-2 shrink-0">
       <h3 className="panel-title">Mediator</h3>
 
       <div className="flex gap-1.5">

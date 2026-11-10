@@ -78,7 +78,7 @@ export default function VoteResults({ groups, participantGroupMap }) {
   if (!eligibleParticipantIds.length) return null;
 
   return (
-    <div className="glass-panel p-3 space-y-2">
+    <div className="glass-panel p-3 space-y-2 shrink-0">
       <div className="flex items-center justify-between">
         <h3 className="panel-title">Votes</h3>
         {stats && (
