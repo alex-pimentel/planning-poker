@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { supabase } from '../lib/supabase';
 import { useGameStore } from '../store/gameStore';
 
@@ -6,6 +6,7 @@ export function useTasks(roomId) {
   const tasks = useGameStore((s) => s.tasks);
   const setTasks = useGameStore((s) => s.setTasks);
   const setRoomInfo = useGameStore((s) => s.setRoomInfo);
+  const tasksChannel = useRef(null);
 
   const fetchTasks = useCallback(async () => {
     if (!roomId) return;
@@ -20,13 +21,20 @@ export function useTasks(roomId) {
   }, [roomId, setTasks]);
 
   const notifyTasksChanged = useCallback(async () => {
-    const channel = supabase.channel(`room:${roomId}`);
+    if (!roomId) return;
+
+    // `supabase.channel(topic)` reuses an existing channel with the same topic
+    // (e.g. the presence channel). Never tear down a channel that is already
+    // subscribed elsewhere in the app.
+    const channel = tasksChannel.current ?? supabase.channel(`room:${roomId}`);
     await channel.send({
       type: 'broadcast',
       event: 'tasks_changed',
       payload: {},
     });
-    supabase.removeChannel(channel);
+    if (channel !== tasksChannel.current && channel.state !== 'joined') {
+      supabase.removeChannel(channel);
+    }
   }, [roomId]);
 
   const addTask = useCallback(
@@ -125,8 +133,10 @@ export function useTasks(roomId) {
     if (!roomId) return;
     fetchTasks();
     const channel = supabase.channel(`room:${roomId}`);
+    tasksChannel.current = channel;
     channel.on('broadcast', { event: 'tasks_changed' }, () => fetchTasks()).subscribe();
     return () => {
+      tasksChannel.current = null;
       supabase.removeChannel(channel);
     };
   }, [roomId, fetchTasks]);

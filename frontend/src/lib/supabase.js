@@ -25,6 +25,15 @@ let anonUser = null;
 export async function ensureAnonAuth() {
   if (anonUser) return anonUser;
 
+  // Reuse the persisted session. Calling signInAnonymously() on every join
+  // creates a brand-new user, which changes auth.uid() and silently breaks
+  // mediator-only operations (RLS) for rooms created by the previous session.
+  const { data: sessionData } = await supabase.auth.getSession();
+  if (sessionData?.session?.user) {
+    anonUser = sessionData.session.user;
+    return anonUser;
+  }
+
   const {
     data: { session },
     error,

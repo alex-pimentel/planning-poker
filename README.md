@@ -13,6 +13,10 @@
   </p>
 
   <p>
+    <a href="https://planning-poker.agenteresolve.com.br"><strong>🚀 Acessar em produção: planning-poker.agenteresolve.com.br</strong></a>
+  </p>
+
+  <p>
     <a href="#-features">Features</a> •
     <a href="#-architecture">Architecture</a> •
     <a href="#-quick-start">Quick Start</a> •
@@ -226,6 +230,8 @@ make test-e2e
 ## 🚀 Deployment
 
 ### Cloudflare Pages
+
+**Produção:** <https://planning-poker.agenteresolve.com.br>
 
 The project is designed for Cloudflare Pages with automatic CI/CD.
 

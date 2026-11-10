@@ -43,7 +43,7 @@ function HomeScreen({ onNavigate }) {
 }
 
 function RoomScreen({ onLeave }) {
-  const { roomInfo, userId, userName, isMediator, participants } = useGameStore();
+  const { roomInfo, userId, userName, isMediator, participants, error, setError } = useGameStore();
   const { castVote, leaveRoom } = useSupabaseRoom(roomInfo.id, userId, userName);
   const { kickParticipant, transferMediator, advanceRound } = useRoomActions();
   const handleSelectTask = useCallback(
@@ -112,6 +112,22 @@ function RoomScreen({ onLeave }) {
 
   return (
     <div className="h-screen w-screen flex flex-col">
+      {error && (
+        <div
+          className="mx-4 mt-3 px-3 py-2 rounded-xl bg-red-500/10 border border-red-500/30
+                     text-red-300 text-sm flex items-center justify-between gap-3"
+        >
+          <span>{error}</span>
+          <button
+            onClick={() => setError(null)}
+            className="text-red-300/70 hover:text-white transition-colors"
+            aria-label="Dismiss error"
+          >
+            ✕
+          </button>
+        </div>
+      )}
+
       <div className="flex-none px-4 pt-4 pb-2">
         <RoomInfo onLeave={handleLeave} tasks={tasks} groups={groups} />
       </div>

@@ -1,7 +1,10 @@
-import { useEffect, useCallback } from 'react';
+import { useEffect, useCallback, useRef } from 'react';
 import { supabase } from '../lib/supabase';
 import { useGameStore } from '../store/gameStore';
 import { ROOM_STATUS } from '../lib/constants';
+
+const ROOM_POLL_INTERVAL_MS = 5000;
+const VOTES_FETCH_DEBOUNCE_MS = 150;
 
 export function useSupabaseRoom(roomId, userId, userName) {
   const setRoomInfo = useGameStore((s) => s.setRoomInfo);
@@ -12,14 +15,77 @@ export function useSupabaseRoom(roomId, userId, userName) {
   const clearTable = useGameStore((s) => s.clearTable);
   const setError = useGameStore((s) => s.setError);
 
+  const votesRequestId = useRef(0);
+  const votesFetchTimer = useRef(null);
+
   const fetchLatestVotes = useCallback(
     async (rId) => {
+      const requestId = ++votesRequestId.current;
       const { data, error } = await supabase.from('votes').select('*').eq('room_id', rId);
-      if (!error && data) {
+      // Ignore out-of-order responses so an older snapshot cannot wipe newer votes.
+      if (!error && data && requestId === votesRequestId.current) {
         setVotes(data);
       }
     },
     [setVotes],
+  );
+
+  const scheduleVotesFetch = useCallback(
+    (rId) => {
+      if (votesFetchTimer.current) clearTimeout(votesFetchTimer.current);
+      votesFetchTimer.current = setTimeout(() => {
+        votesFetchTimer.current = null;
+        fetchLatestVotes(rId);
+      }, VOTES_FETCH_DEBOUNCE_MS);
+    },
+    [fetchLatestVotes],
+  );
+
+  const applyRoomState = useCallback(
+    (room) => {
+      if (!room) return false;
+
+      // Never let a delayed response/event roll the room back to an older state.
+      const current = useGameStore.getState().roomInfo;
+      if (
+        current?.updated_at &&
+        room.updated_at &&
+        new Date(room.updated_at) < new Date(current.updated_at)
+      ) {
+        return false;
+      }
+
+      const previousStatus = current?.status;
+      setRoomInfo(room);
+
+      if (room.mediator_id) {
+        setIsMediator(room.mediator_id === userId);
+      }
+      if (room.status === ROOM_STATUS.RESET) {
+        clearTable();
+      }
+      // Only reset the local card when a new round actually starts; polling the
+      // same "voting" state must not clear the card the user just selected.
+      if (room.status === ROOM_STATUS.VOTING && previousStatus !== ROOM_STATUS.VOTING) {
+        setLocalVote(null);
+      }
+
+      return true;
+    },
+    [setRoomInfo, setIsMediator, userId, clearTable, setLocalVote],
+  );
+
+  const fetchRoom = useCallback(
+    async (rId) => {
+      const { data, error } = await supabase.from('rooms').select('*').eq('id', rId).maybeSingle();
+
+      if (error || !data) return;
+
+      applyRoomState(data);
+      // Keep votes in sync too (covers missed vote events, e.g. right before reveal).
+      fetchLatestVotes(rId);
+    },
+    [applyRoomState, fetchLatestVotes],
   );
 
   useEffect(() => {
@@ -40,19 +106,17 @@ export function useSupabaseRoom(roomId, userId, userName) {
           filter: `id=eq.${roomId}`,
         },
         (payload) => {
-          setRoomInfo(payload.new);
-          if (payload.new.mediator_id) {
-            setIsMediator(payload.new.mediator_id === userId);
-          }
-          if (payload.new.status === ROOM_STATUS.RESET) {
-            clearTable();
-          }
-          if (payload.new.status === ROOM_STATUS.VOTING) {
-            setLocalVote(null);
-          }
+          if (!payload.new) return;
+          applyRoomState(payload.new);
+          // Re-fetch votes on every room transition so reveal never renders a
+          // stale/partial set of cards.
+          scheduleVotesFetch(roomId);
         },
       )
-      .subscribe();
+      .subscribe((status) => {
+        // Also resync after a reconnect where changes may have been missed.
+        if (status === 'SUBSCRIBED') fetchRoom(roomId);
+      });
 
     const dbVoteSub = supabase
       .channel(`votes-db:${roomId}`)
@@ -64,11 +128,11 @@ export function useSupabaseRoom(roomId, userId, userName) {
           table: 'votes',
           filter: `room_id=eq.${roomId}`,
         },
-        () => {
-          fetchLatestVotes(roomId);
-        },
+        () => scheduleVotesFetch(roomId),
       )
-      .subscribe();
+      .subscribe((status) => {
+        if (status === 'SUBSCRIBED') fetchLatestVotes(roomId);
+      });
 
     roomChannel
       .on('presence', { event: 'sync' }, () => {
@@ -89,12 +153,30 @@ export function useSupabaseRoom(roomId, userId, userName) {
             user_id: userId,
             online_at: new Date().toISOString(),
           });
+          fetchRoom(roomId);
         }
       });
 
-    fetchLatestVotes(roomId);
+    fetchRoom(roomId);
+
+    // Reconciliation fallback: Realtime (Postgres Changes) is best-effort and
+    // can drop events under load. Polling the room row keeps every client
+    // eventually consistent even when an event is lost.
+    const resync = () => {
+      if (document.visibilityState === 'visible') fetchRoom(roomId);
+    };
+    const pollId = setInterval(resync, ROOM_POLL_INTERVAL_MS);
+    window.addEventListener('focus', resync);
+    document.addEventListener('visibilitychange', resync);
 
     return () => {
+      clearInterval(pollId);
+      window.removeEventListener('focus', resync);
+      document.removeEventListener('visibilitychange', resync);
+      if (votesFetchTimer.current) {
+        clearTimeout(votesFetchTimer.current);
+        votesFetchTimer.current = null;
+      }
       supabase.removeChannel(roomChannel);
       supabase.removeChannel(dbRoomSub);
       supabase.removeChannel(dbVoteSub);
@@ -103,12 +185,11 @@ export function useSupabaseRoom(roomId, userId, userName) {
     roomId,
     userId,
     userName,
-    setRoomInfo,
-    setParticipants,
-    setLocalVote,
-    setIsMediator,
-    clearTable,
+    applyRoomState,
+    fetchRoom,
     fetchLatestVotes,
+    scheduleVotesFetch,
+    setParticipants,
   ]);
 
   const castVote = useCallback(
@@ -143,6 +224,9 @@ export function useSupabaseRoom(roomId, userId, userName) {
       if (error) {
         setError(error.message);
         setLocalVote(null);
+      } else {
+        // Update immediately for the voter instead of waiting for the event.
+        fetchLatestVotes(roomId);
       }
     },
     [roomId, userId, userName, setLocalVote, setError, fetchLatestVotes],
