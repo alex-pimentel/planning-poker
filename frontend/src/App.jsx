@@ -15,6 +15,10 @@ import TaskListPanel from './components/ui/TaskListPanel';
 import GroupManager from './components/ui/GroupManager';
 import TransferMediatorModal from './components/ui/TransferMediatorModal';
 
+const MIN_BOTTOM_HEIGHT = 180;
+const MAX_BOTTOM_HEIGHT = 500;
+const DEFAULT_BOTTOM_HEIGHT = 200;
+
 function HomeScreen({ onNavigate }) {
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
@@ -67,7 +71,9 @@ function RoomScreen({ onLeave }) {
   const [showTransferModal, setShowTransferModal] = useState(false);
   const [bottomHeight, setBottomHeight] = useState(() => {
     const saved = localStorage.getItem('planning-poker-bottom-height');
-    return saved ? parseInt(saved, 10) : 200;
+    const parsed = saved ? parseInt(saved, 10) : DEFAULT_BOTTOM_HEIGHT;
+    const initial = Number.isFinite(parsed) ? parsed : DEFAULT_BOTTOM_HEIGHT;
+    return Math.max(MIN_BOTTOM_HEIGHT, Math.min(MAX_BOTTOM_HEIGHT, initial));
   });
   const resizing = useRef(false);
 
@@ -81,7 +87,7 @@ function RoomScreen({ onLeave }) {
       const onMouseMove = (ev) => {
         if (!resizing.current) return;
         const delta = startY - ev.clientY;
-        const newH = Math.max(120, Math.min(500, startH + delta));
+        const newH = Math.max(MIN_BOTTOM_HEIGHT, Math.min(MAX_BOTTOM_HEIGHT, startH + delta));
         setBottomHeight(newH);
         localStorage.setItem('planning-poker-bottom-height', newH);
       };
